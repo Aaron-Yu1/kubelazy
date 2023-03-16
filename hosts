@@ -1,0 +1,17 @@
+# This is the default 'hosts' file.
+#
+# You should change it and replace IP address
+[master]
+192.168.3.101
+192.168.3.102
+192.168.3.103
+
+[etcd]
+192.168.3.101
+192.168.3.102
+192.168.3.103
+
+[work]
+192.168.3.201
+192.168.3.202
+192.168.3.203

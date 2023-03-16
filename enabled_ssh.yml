@@ -1,0 +1,9 @@
+---
+- name: Enabled ssh for root user
+  hosts: master
+  tasks:
+    - name: enabled ssh
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '#PermitRootLogin'
+        line: PermitRootLogin yes

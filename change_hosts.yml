@@ -1,0 +1,9 @@
+---
+- name: change /etc/hosts file
+  hosts: master
+  tasks:
+    - name: Copy file to server
+      template:
+        src: hosts.j2
+        dest: /etc/hosts
+        backup: yes
