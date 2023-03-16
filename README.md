@@ -7,3 +7,8 @@ Support OS
 Support Kubernetes version
 
 Need to configure ssh
+
+
+1. change_hosts.yml
+2. enabled_root.yml
+3. enabled_ssh.yml
