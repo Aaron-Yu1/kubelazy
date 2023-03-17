@@ -1,14 +1,28 @@
-Deploy kubernetes by Ansible.
+通过 Ansible 部署 Kubernetes
+  
 
+支持的操作系统：
+  Ubuntu 20.04
 
-Support OS
-    Ubuntu 20.04
+Kubernetes 版本：
+  1.26.1
 
-Support Kubernetes version
+etcd 版本
+  3.5.5
 
-Need to configure ssh
+containerd 版本
+  1.6.14
 
+需要使用 root 用户运行，并配置 ssh 免密登录
 
+需要更改 hosts， 添加自己的服务器地址
+
+运行顺序：
 1. change_hosts.yml
 2. enabled_root.yml
 3. enabled_ssh.yml
+4. timezone.yml
+5. certs.yml
+6. etcd.yml
+
+未完，待续...
