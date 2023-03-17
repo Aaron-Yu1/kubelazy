@@ -1,0 +1,6 @@
+---
+- name: Change time zone to Shanghai
+  hosts: master
+  tasks:
+    - name: time zone
+      shell: timedatectl set-timezone Asia/Shanghai
