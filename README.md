@@ -19,10 +19,11 @@ containerd 版本
 
 运行顺序：
 1. change_hosts.yml
-2. enabled_root.yml
-3. enabled_ssh.yml
-4. timezone.yml
-5. certs.yml
-6. etcd.yml
+2. timezone.yml
+3. certs.yml
+4. etcd.yml
+5. kubeapi.yml
+6. kubecontroler.yml
+7. kubescheduler.yml
 
 未完，待续...

@@ -1,0 +1,42 @@
+---
+- name: Install kubernetes API Server
+  hosts: master
+  tasks:
+    - name: Copy binary file
+      copy:
+        src: bin/{{ item }}
+        dest: /usr/local/bin/
+        mode: 0755
+      with_items:
+        - kube-apiserver
+        - kube-scheduler
+        - kube-controller-manager
+        - kubectl
+    - name: Copy service file
+      copy:
+        src: service/kube-apiserver.service
+        dest: /usr/lib/systemd/system/kube-apiserver.service
+    - name: Copy kube-api config
+      template:
+        src: config/kube-apiserver.j2
+        dest: /etc/kubernetes/kube-apiserver
+    - name: Copy kubeconfig
+      template:
+        src: config/kubeconfig.j2
+        dest: /etc/kubernetes/kubeconfig
+    - name: copy API Server certificate
+      copy:
+        src: certs/{{ item }}
+        dest: /etc/kubernetes/ssl/
+      with_items:
+        - apiserver.crt
+        - apiserver.csr
+        - apiserver.key
+        - client.crt
+        - client.csr
+        - client.key
+    - name: Set the service to start upon startup
+      shell: systemctl daemon-reload && systemctl enable kube-apiserver.service
+    - name: Rstart kebe-apiserver service
+      shell: systemctl restart kube-apiserver.service
+
