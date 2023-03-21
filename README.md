@@ -17,6 +17,14 @@ containerd 版本
 
 需要更改 hosts， 添加自己的服务器地址
 
+需要下载 etcd, kubernetes 和containerd 二进制文件
+```bash
+https://mirrors.huaweicloud.com/etcd/v3.5.5/etcd-v3.5.5-linux-amd64.tar.gz
+wget https://dl.k8s.io/v1.26.1/kubernetes-server-linux-amd64.tar.gz
+wget https://github.com/containerd/containerd/releases/download/v1.6.14/cri-containerd-cni-1.6.14-linux-amd64.tar.gz
+```
+
+
 运行顺序：
 1. change_hosts.yml
 2. timezone.yml
