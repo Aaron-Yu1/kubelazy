@@ -1,6 +1,0 @@
----
-- name: Enabled root user
-  hosts: master
-  tasks:
-    - name: change password for root user
-      shell: echo "root:P@ssw0rd"| chpasswd 
