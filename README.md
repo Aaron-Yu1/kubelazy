@@ -34,12 +34,6 @@ wget https://github.com/containerd/containerd/releases/download/v1.6.14/cri-cont
 6. kubecontroler.yml
 7. kubescheduler.yml
 8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
-9. node.yml8. ha.yml
 9. node.yml
+
 未完，待续...
