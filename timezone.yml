@@ -4,3 +4,5 @@
   tasks:
     - name: time zone
       shell: timedatectl set-timezone Asia/Shanghai
+    - name: Disabled RTC sync
+      shell: timedatectl set-local-rtc false

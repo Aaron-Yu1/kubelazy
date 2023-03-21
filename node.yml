@@ -1,0 +1,135 @@
+---
+- name: Install work node
+  hosts: work
+  tasks:
+    - name: Disable SWAP(1)
+      replace:
+        path: /etc/fstab
+        regexp: '^([^#].*swap.*)$'
+        replace: '# \1' 
+    - name: Disable SWAP(2)
+      shell: swapoff -a
+    - name: Set ip forwarding on in /proc and in the sysctl file and reload if necessary
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: yes
+        state: present
+        reload: yes
+    - name: Copy containerd binary file
+      copy:
+        src: bin/usr/local/bin/{{ item }}
+        dest: /usr/local/bin/
+        mode: preserve
+      with_items:
+        - containerd
+        - containerd-shim-runc-v1
+        - containerd-stress
+        - critest
+        - ctr
+        - containerd-shim  
+        - containerd-shim-runc-v2
+        - crictl
+        - ctd-decoder
+    - name: Copy containerd runc file
+      copy:
+        src: bin/usr/local/sbin/runc
+        dest: /usr/local/sbin/
+        mode: preserve
+    - name: Copy opt file
+      copy:
+        src: bin/opt/{{ item }}
+        dest: /opt/
+        mode: preserve
+      with_items:
+        - cni
+        - containerd
+    - name: Copy service file
+      copy:
+        src: bin/etc/systemd/system/containerd.service
+        dest: /etc/systemd/system/containerd.service
+        mode: preserve
+    - name: Copy crictl yaml file
+      copy:
+        src: bin/etc/crictl.yaml
+        dest: /etc/
+        mode: preserve
+    - name: Copy cni config file
+      copy:
+        src: bin/etc/cni
+        dest: /etc/
+        mode: preserve
+    - name: Check the stat of /etc/containerd directory
+      stat:
+        path: /etc/containerd
+      register: CD
+    - name: Create a direcotory for containerd
+      file:
+        path: /etc/containerd
+        state: directory
+      when: "CD.stat.isreg is not defined"
+    - name: Copy containerd config
+      template:
+        src: config/config.toml.j2
+        dest: /etc/containerd/config.toml
+    - name: Set the service to start upon startup
+      shell: systemctl daemon-reload && systemctl enable containerd.service
+    - name: Rstart containerd service
+      shell: systemctl restart containerd.service
+    - name: Check the stat of /etc/containerd directory
+      stat:
+        path: /etc/kubernetes/ssl
+      register: kube
+    - name: Create a direcotory for containerd
+      file:
+        path: /etc/kubernetes/ssl
+        state: directory
+      when: "kube.stat.isreg is not defined"
+    - name: Copy kubelet and kube-proxy binary file
+      copy:
+        src: bin/{{ item }}
+        dest: /usr/local/bin/
+        mode: preserve
+      with_items:
+        - kubelet
+        - kube-proxy
+    - name: Copy service file
+      copy:
+        src: service/{{ item }}
+        dest: /usr/lib/systemd/system/
+      with_items:
+        - kubelet.service
+        - kube-proxy.service
+    - name: Copy kubelet.confige file
+      template:
+        src: config/kubelet.config.j2
+        dest: /etc/kubernetes/kubelet.config
+    - name: Copy kubelet
+      template:
+        src: config/kubelet.j2
+        dest: /etc/kubernetes/kubelet
+    - name: Copy kube-proxy config file
+      template:
+        src: config/proxy.j2
+        dest: /etc/kubernetes/proxy
+    - name: Copy kubeconfig file
+      template:
+        src: config/kubeconfig.j2
+        dest: /etc/kubernetes/kubeconfig
+    - name: Copy cert file
+      copy:
+        src: certs/{{ item }}
+        dest: /etc/kubernetes/ssl/
+      with_items:
+        - client.crt
+        - client.csr
+        - client.key
+        - ca.crt
+    - name: Set the service to start upon startup
+      shell: systemctl daemon-reload && systemctl enable kubelet.service
+    - name: Rstart kubelet service
+      shell: systemctl restart kubelet.service
+    - name: Set the service to start upon startup
+      shell: systemctl enable kube-proxy.service
+    - name: Rstart kube-proxy service
+      shell: systemctl restart kube-proxy.service

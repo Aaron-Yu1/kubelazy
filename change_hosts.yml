@@ -1,6 +1,6 @@
 ---
 - name: change /etc/hosts file
-  hosts: master
+  hosts: all
   tasks:
     - name: Copy file to server
       template:

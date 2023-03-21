@@ -1,4 +1,4 @@
-ETCD_NAME={{ ansible_facts['fqdn'] }}
+ETCD_NAME={{ ansible_facts['hostname'] }}
 ETCD_DATA_DIR=/etc/kubernetes/etcd/data
 
 ETCD_CERT_FILE=/etc/kubernetes/ssl/etcd_server.crt
