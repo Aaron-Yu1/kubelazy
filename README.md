@@ -16,6 +16,7 @@ containerd 版本
 需要使用 root 用户运行，并配置 ssh 免密登录
 
 需要更改 hosts， 添加自己的服务器地址
+更改 network.yml 以及 dns.yml 文件中的 hosts，指定为自己 master 的服务器地址
 
 需要下载 etcd, kubernetes 和containerd 二进制文件
 ```bash
@@ -24,16 +25,17 @@ wget https://dl.k8s.io/v1.26.1/kubernetes-server-linux-amd64.tar.gz
 wget https://github.com/containerd/containerd/releases/download/v1.6.14/cri-containerd-cni-1.6.14-linux-amd64.tar.gz
 ```
 
+目前只支持 calico 作为网络插件，coredns 作为群集内部的 DNS。
 
 运行顺序：
 1. change_hosts.yml
 2. timezone.yml
 3. certs.yml
 4. etcd.yml
-5. kubeapi.yml
-6. kubecontroler.yml
-7. kubescheduler.yml
-8. ha.yml
-9. node.yml
+5. master.yml
+6. ha.yml
+7. node.yml
+8. networl.yml
+9. dns.yml
 
 未完，待续...

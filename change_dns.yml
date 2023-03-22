@@ -1,0 +1,14 @@
+---
+- name: Install dns plug-in
+  hosts: all
+  tasks:
+    - name: Change resolv.conf file
+      lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '#DNS='
+        line: DNS=192.168.3.240
+    - name: Create link file
+      file:
+        src: /run/systemd/resolve/resolv.conf
+        dest: /etc/resolv.conf
+        state: link

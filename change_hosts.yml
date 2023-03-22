@@ -4,6 +4,6 @@
   tasks:
     - name: Copy file to server
       template:
-        src: hosts.j2
+        src: config/hosts.j2
         dest: /etc/hosts
         backup: yes
