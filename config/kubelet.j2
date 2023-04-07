@@ -1,6 +1,0 @@
-KUBELET_ARGS="--kubeconfig=/etc/kubernetes/kubeconfig \
---config=/etc/kubernetes/kubelet.config \
---hostname-override={{ ansible_facts['fqdn'] }} \
---container-runtime-endpoint=unix:///run/containerd/containerd.sock \
---pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.6 \
---v=2"

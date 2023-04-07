@@ -1,0 +1,5 @@
+---
+# vars file for lb
+interface: ens160
+user: admin
+password: password

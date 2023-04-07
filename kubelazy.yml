@@ -1,0 +1,40 @@
+---
+- name: prepare os
+  hosts: all
+  roles:
+    - prepare
+
+- name: Setup certs
+  hosts: localhost
+  roles:
+    - certs
+
+- name: Setup etcd
+  hosts: etcd
+  roles:
+    - etcd
+
+- name: Setup master node
+  hosts: master
+  roles:
+    - master
+
+- name: Setup worknode
+  hosts: work
+  roles:
+    - node
+
+- name: Setup lb
+  hosts: ha
+  roles:
+    - lb
+
+- name: Set up calico
+  hosts: master
+  roles:
+    - calico
+
+- name: Setup coredns
+  hosts: master
+  roles:
+    - coredns

@@ -1,0 +1,42 @@
+---
+# tasks file for etcd
+- name: Create a directoy for etcd
+  file:
+    path: /etc/kubernetes/etcd/data
+    state: directory
+- name: Create a directory for ssl
+  file:
+    path: /etc/kubernetes/ssl
+    state: directory
+- name: Copy the bin file
+  copy:
+    src: bin/etcd-{{ etcd_version }}-linux-amd64/{{ item }}
+    dest: /usr/local/bin
+    mode: 755
+  with_items:
+    - etcd
+    - etcdctl
+- name: copy service file
+  copy:
+    src: etcd.service
+    dest: /usr/lib/systemd/system/etcd.service
+- name: Copy ectd configure file
+  template:
+    src: etcd.conf.j2
+    dest: /etc/kubernetes/etcd/etcd.conf
+- name: Copy cert file
+  copy:
+    src: certs/{{ item }}
+    dest: /etc/kubernetes/ssl/
+  with_items:
+    - etcd_server.csr
+    - etcd_server.crt
+    - etcd_server.key
+    - etcd_client.key
+    - etcd_client.csr
+    - etcd_client.crt
+    - ca.crt
+- name: Set the service to start upon startup
+  shell: systemctl daemon-reload && systemctl enable etcd.service
+- name: Rstart etcd service
+  shell: systemctl restart etcd.service
