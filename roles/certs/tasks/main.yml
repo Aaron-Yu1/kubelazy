@@ -19,7 +19,7 @@
 - name: create ca cert
   shell: openssl req -x509 -new -nodes \
                  -key certs/ca.key \
-                 -subj "/CN={{ domian_name }}" \
+                 -subj "/CN={{ domain_name }}" \
                  -days {{ root_ca_expire }} -out certs/ca.crt
   when: "p.stat.isreg is not defined"
 - name: Check ssl file state
