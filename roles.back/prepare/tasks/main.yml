@@ -1,0 +1,22 @@
+---
+# tasks file for prepare
+- name: Copy file to server
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    backup: yes
+- name: Change resolv.conf file
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '#DNS='
+    line: DNS={{ dns }}
+- name: Create link file
+  file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+- name: time zone
+  shell: timedatectl set-timezone {{ timezone }} 
+- name: Disabled RTC sync
+  shell: timedatectl set-local-rtc false
+

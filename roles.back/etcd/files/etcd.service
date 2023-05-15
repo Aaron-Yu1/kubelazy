@@ -1,0 +1,12 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/etcd-io/etcd
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/kubernetes/etcd/etcd.conf
+ExecStart=/usr/local/bin/etcd
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

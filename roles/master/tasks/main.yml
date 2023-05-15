@@ -1,5 +1,22 @@
 ---
 # tasks file for master
+- name: Create some directory
+  file: 
+    name: ~/.kube
+    state: directory
+    mode: 0775
+
+- name: get certs directory info
+  stat:
+    path: certs/
+  register: ssl
+
+- name: Creste a dir for certs
+  file:
+    path: /etc/kubernetes/ssl
+    state: directory
+  when: "ssl.stat.isreg is not defined"
+
 - name: Copy binary file
   copy:
     src: bin/kubernetes/server/bin/{{ item }}
@@ -10,54 +27,49 @@
     - kube-scheduler
     - kube-controller-manager
     - kubectl
-- name: Copy kube-api config
-  template:
-    src: kube-apiserver.j2
-    dest: /etc/kubernetes/kube-apiserver
-- name: Copy kubeconfig
-  template:
-    src: kubeconfig.j2
-    dest: /etc/kubernetes/kubeconfig
-- name: copy API Server certificate
+
+- name: Copy kubeconfig file
+  copy: 
+    src: certs/{{ item }} 
+    dest: /etc/kubernetes/{{ item }}
+  with_items:
+    - kube-controller-manager.kubeconfig
+    - kube-scheduler.kubeconfig
+
+- name: Copy kubernetes certs
   copy:
     src: certs/{{ item }}
-    dest: /etc/kubernetes/ssl/
+    dest: /etc/kubernetes/ssl/{{ item }}
   with_items:
-    - apiserver.crt
-    - apiserver.csr
-    - apiserver.key
-    - client.crt
-    - client.csr
-    - client.key
-- name: Copy kube-controller-manager config
-  template:
-    src: kube-controller-manager.j2
-    dest: /etc/kubernetes/kube-controller-manager
-- name: Copy kube-scheduler config
-  template:
-    src: kube-scheduler.j2
-    dest: /etc/kubernetes/kube-scheduler
+    - ca.pem
+    - ca-key.pem
+    - apiserver.pem
+    - apiserver-key.pem
+    - aggregator-proxy.pem
+    - aggregator-proxy-key.pem
+
 - name: Copy service file
-  copy:
-    src: "{{ item }}"
-    dest: /usr/lib/systemd/system/
+  template:
+    src: "{{ item }}.j2" 
+    dest: /etc/systemd/system/{{ item }}
   with_items:
     - kube-apiserver.service
     - kube-controller-manager.service
     - kube-scheduler.service
-- name: Reload the system service
-  shell: systemctl daemon-reload 
-- name: Set the service to start upon startup
-  shell: systemctl enable kube-apiserver.service && \
-         systemctl enable kube-controller-manager.service && \
-         systemctl enable kube-scheduler.service
-- name: Rstart service
-  shell: systemctl restart kube-apiserver.service && \
-         systemctl restart kube-controller-manager.service && \
-         systemctl restart kube-scheduler.service 
-- name: config --kubeconfig
+
+- name:  Start the service
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  with_items:
+    - kube-apiserver.service
+    - kube-controller-manager.service
+    - kube-scheduler.service
+
+- name: Copy kubeconfig file
   copy:
-    src: k8s.sh
-    dest: /etc/profile.d/
-- name: apply
-  shell: . /etc/profile.d/k8s.sh
+    src: certs/kubectl.kubeconfig
+    dest: ~/.kube/config
+    mode: 0400

@@ -2,24 +2,21 @@
 #
 # You should change it and replace IP address
 [master]
-192.168.3.101
-192.168.3.102
-192.168.3.103
+192.168.3.190
 
 [etcd]
-192.168.3.101
-192.168.3.102
-192.168.3.103
+192.168.3.190 ETCD_NODE_NAME=testmaster
+192.168.3.191 ETCD_NODE_NAME=testwork1
+192.168.3.192 ETCD_NODE_NAME=testwork2
 
 [work]
-192.168.3.111
-192.168.3.112
-192.168.3.113
+192.168.3.191 K8S_NODE_NAME=testwork1
+192.168.3.192 K8S_NODE_NAME=testwork2
 
 [ha]
-192.168.3.221 state=MASTER priority=100
-192.168.3.222 state=BACKUP priority=90
+#192.168.3.221 state=MASTER priority=100
+#192.168.3.222 state=BACKUP priority=90
 
 # 基于需要，选择是否安装 harbor，如果需要，更改到对应的地址，并取消注释。
-#[harbor]
+[harbor]
 #192.168.3.104

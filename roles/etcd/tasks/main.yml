@@ -4,10 +4,18 @@
   file:
     path: /etc/kubernetes/etcd/data
     state: directory
-- name: Create a directory for ssl
+
+- name: get certs directory info
+  stat:
+    path: certs/
+  register: ssl
+
+- name: Creste a dir for certs
   file:
     path: /etc/kubernetes/ssl
     state: directory
+  when: "ssl.stat.isreg is not defined"
+
 - name: Copy the bin file
   copy:
     src: bin/etcd-{{ etcd_version }}-linux-amd64/{{ item }}
@@ -17,26 +25,20 @@
     - etcd
     - etcdctl
 - name: copy service file
-  copy:
-    src: etcd.service
-    dest: /usr/lib/systemd/system/etcd.service
-- name: Copy ectd configure file
   template:
-    src: etcd.conf.j2
-    dest: /etc/kubernetes/etcd/etcd.conf
+    src: etcd.service.j2 
+    dest: /usr/lib/systemd/system/etcd.service
 - name: Copy cert file
   copy:
     src: certs/{{ item }}
     dest: /etc/kubernetes/ssl/
   with_items:
-    - etcd_server.csr
-    - etcd_server.crt
-    - etcd_server.key
-    - etcd_client.key
-    - etcd_client.csr
-    - etcd_client.crt
-    - ca.crt
-- name: Set the service to start upon startup
-  shell: systemctl daemon-reload && systemctl enable etcd.service
-- name: Rstart etcd service
-  shell: systemctl restart etcd.service
+    - ca.pem
+    - etcd.pem
+    - etcd-key.pem
+- name:  Start the service
+  systemd:
+    name: etcd.service
+    state: started
+    enabled: true
+    daemon_reload: true

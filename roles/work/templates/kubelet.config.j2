@@ -1,0 +1,10 @@
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+address: 0.0.0.0
+port: 10250
+cgroupDriver: systemd
+clusterDNS: ["{{ dns_address }}"]
+clusterDomain: {{ domain_name }} 
+authentication:
+  anonymous:
+    enabled: true

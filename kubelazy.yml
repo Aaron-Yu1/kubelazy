@@ -1,40 +1,21 @@
 ---
-- name: prepare os
+- name: Deploy kubernetes
   hosts: all
+  vars_files:
+    - config.yml
   roles:
-    - prepare
-
-- name: Setup certs
-  hosts: localhost
-  roles:
-    - certs
-
-- name: Setup etcd
-  hosts: etcd
-  roles:
-    - etcd
-
-- name: Setup master node
-  hosts: master
-  roles:
-    - master
-
-- name: Setup worknode
-  hosts: work
-  roles:
-    - node
-
-- name: Setup lb
-  hosts: ha
-  roles:
-    - lb
-
-- name: Set up calico
-  hosts: master
-  roles:
-    - calico
-
-- name: Setup coredns
-  hosts: master
-  roles:
-    - coredns
+    - name: Initialize the OS
+      role: prepare
+    - name: Create certs
+      role: certs
+      delegate_to: localhost
+      run_once: true
+    - name: Deploy etcd
+      role: etcd
+      when: "inventory_hostname in groups['etcd']"
+    - name: Deploy master node
+      role: master
+      when: "inventory_hostname in groups['master']" 
+    - name: Deploy work node
+      role: work
+      when: "inventory_hostname in groups['work']"

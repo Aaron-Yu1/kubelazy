@@ -1,5 +1,4 @@
 ---
 # vars file for master
-service_ip_range: 172.16.0.0/16
-service_port_range: 30000-32767
-vip_address: 192.168.3.220
+TMP_ENDPOINTS: "{% for h in groups.etcd %}https://{{ h }}:2379,{% endfor %}"
+ETCD_ENDPOINTS: "{{ TMP_ENDPOINTS.rstrip(',') }}"

@@ -4,112 +4,76 @@
   stat: 
     path: certs/
   register: d
+
 - name: Creste a dir for certs
   file:
     path: certs
     state: directory
   when: "d.stat.isreg is not defined"
+
 - name: get ca infor
   stat:
-    path: certs/ca.crt
+    path: certs/ca.pem
   register: p
-- name: create ca key
-  shell: openssl genrsa -out certs/ca.key 2048
+
+- name: Copy cert request file
+  template: 
+    src: "{{ item }}.j2" 
+    dest: certs/{{ item }}
+  with_items:
+    - ca-config.json
+    - ca-csr.json
   when: "p.stat.isreg is not defined"
-- name: create ca cert
-  shell: openssl req -x509 -new -nodes \
-                 -key certs/ca.key \
-                 -subj "/CN={{ domain_name }}" \
-                 -days {{ root_ca_expire }} -out certs/ca.crt
+
+- name: Create CA key
+  shell: "cd certs/ && cfssl gencert \
+                       -initca ca-csr.json | cfssljson -bare ca" 
   when: "p.stat.isreg is not defined"
-- name: Check ssl file state
+
+- name: Get etcd cert info
   stat:
-    path: certs/etcd_ssl.cnf
-  register: S
-- name: copy ssl file
-  template:
-    src: etcd_ssl.cnf.j2
-    dest: certs/etcd_ssl.cnf
-  when: "S.stat.isreg is not defined"
-- name: Get etcd server cert infor
+    path: certs/etcd.pem
+  register: e
+
+- import_tasks: etcd.yml
+  when: "e.stat.isreg is not defined"
+
+- name: Get kubernetes cert info
   stat:
-    path: certs/etcd_server.crt
-  register: ES
-- name: Create etcd server key
-  shell: openssl genrsa -out certs/etcd_server.key 2048
-  when: "ES.stat.isreg is not defined"
-- name: Get csr file
-  shell:  openssl req -new -key certs/etcd_server.key \
-                  -config certs/etcd_ssl.cnf \
-                  -subj "/CN=etcd-server" \
-                  -out certs/etcd_server.csr
-  when: "ES.stat.isreg is not defined"
-- name: Create etcd server cert
-  shell: openssl x509 -req -in certs/etcd_server.csr \
-                 -CA certs/ca.crt -CAkey certs/ca.key \
-                 -CAcreateserial -days {{ expire_day }} \
-                 -extensions v3_req -extfile certs/etcd_ssl.cnf \
-                 -out certs/etcd_server.crt
-  when: "ES.stat.isreg is not defined"
-- name: Get etcd client cert infor
+    path: certs/apiserver.pem
+  register: api
+
+- import_tasks: kube-apiserver.yml
+  when: "api.stat.isreg is not defined"
+
+- name: Get kubectl_kubeconfig info
   stat:
-    path: certs/etcd_client.crt
-  register: EC
-- name: Create etcd client key
-  shell: openssl genrsa -out certs/etcd_client.key 2048
-  when: "EC.stat.isreg is not defined"
-- name: Get csr file
-  shell: openssl req -new -key certs/etcd_client.key \
-                 -config certs/etcd_ssl.cnf \
-                 -subj "/CN=etcd-client" \
-                 -out certs/etcd_client.csr
-  when: "EC.stat.isreg is not defined"
-- name: Create etcd client cert
-  shell: openssl x509 -req -in certs/etcd_client.csr \
-                 -CA certs/ca.crt -CAkey certs/ca.key \
-                 -CAcreateserial -days {{ expire_day }} \
-                 -extensions v3_req -extfile certs/etcd_ssl.cnf \
-                 -out certs/etcd_client.crt
-  when: "EC.stat.isreg is not defined"
-- name: Get API Server certificate state
-  stat: 
-    path: certs/apiserver.crt
-  register: AS
-- name: Copy ssl file of APIServer
-  template:
-    src: master_ssl.cnf.j2
-    dest: certs/master_ssl.cnf
-  when: "AS.stat.isreg is not defined"
-- name: Creste API Server key
-  shell: openssl genrsa -out certs/apiserver.key 2048
-  when: "AS.stat.isreg is not defined"
-- name: Create csr file
-  shell: openssl req -new -key certs/apiserver.key \
-                 -config certs/master_ssl.cnf \
-                 -subj "/CN=master" \
-                 -out certs/apiserver.csr
-  when: "AS.stat.isreg is not defined"
-- name: Create certificate file
-  shell: openssl x509 -req -in certs/apiserver.csr \
-                 -CA certs/ca.crt -CAkey certs/ca.key \
-                 -CAcreateserial -days {{ expire_day }} \
-                 -extensions v3_req -extfile certs/master_ssl.cnf \
-                 -out certs/apiserver.crt
-  when: "AS.stat.isreg is not defined"
-- name: Get API client certificate state
-  stat: 
-    path: certs/client.crt
-  register: AC
-- name: Create API client key
-  shell: openssl genrsa -out certs/client.key 2048
-  when: "AC.stat.isreg is not defined"
-- name: Create csr file
-  shell: openssl req -new -key certs/client.key \
-                 -subj "/CN=kubernetes.default.svc" \
-                 -out certs/client.csr
-  when: "AC.stat.isreg is not defined"
-- name: Create API Client certificate
-  shell: openssl x509 -req -in certs/client.csr \
-                 -CA certs/ca.crt -CAkey certs/ca.key -CAcreateserial \
-                 -out certs/client.crt -days {{ expire_day }}
-  when: "AC.stat.isreg is not defined"
+    path: certs/kubectl.kubeconfig
+  register: kubectl
+
+- import_tasks: kubectl_kubeconfig.yml
+  when: "kubectl.stat.isreg is not defined"
+
+- name: Get kube-controller-manager.kubeconfig info
+  stat:
+    path: certs/kube-controller-manager.kubeconfig
+  register: kcm
+
+- import_tasks: kube-controller-manager.kubeconfig.yml
+  when: "kcm.stat.isreg is not defined"
+
+- name: Get kube-scheduler.kubeconfig info
+  stat:
+    path: certs/kube-scheduler.kubeconfig
+  register: ks
+
+- import_tasks: kube-scheduler.kubeconfig.yml
+  when: "ks.stat.isreg is not defined"
+
+- name: Get kube-scheduler.kubeconfig info
+  stat:
+    path: certs/kube-proxy.kubeconfig
+  register: kp
+  
+- import_tasks: kube-proxy.kubeconfig.yml
+  when: "kp.stat.isreg is not defined"

@@ -1,0 +1,63 @@
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+address: 0.0.0.0
+authentication:
+  anonymous:
+    enabled: false
+  webhook:
+    cacheTTL: 2m0s
+    enabled: true
+  x509:
+    clientCAFile: /etc/kubernetes/ssl/ca.pem
+authorization:
+  mode: Webhook
+  webhook:
+    cacheAuthorizedTTL: 5m0s
+    cacheUnauthorizedTTL: 30s
+cgroupDriver: systemd
+cgroupsPerQOS: true
+clusterDNS:
+- {{ CLUSTER_DNS_SVC_IP }}
+clusterDomain: {{ CLUSTER_DNS_DOMAIN }}
+configMapAndSecretChangeDetectionStrategy: Watch
+containerLogMaxFiles: 3 
+containerLogMaxSize: 10Mi
+eventBurst: 10
+eventRecordQPS: 5
+evictionHard:
+  imagefs.available: 15%
+  memory.available: 300Mi
+  nodefs.available: 10%
+  nodefs.inodesFree: 5%
+evictionPressureTransitionPeriod: 5m0s
+failSwapOn: true
+fileCheckFrequency: 40s
+hairpinMode: hairpin-veth 
+healthzBindAddress: 0.0.0.0
+healthzPort: 10248
+httpCheckFrequency: 40s
+imageGCHighThresholdPercent: 85
+imageGCLowThresholdPercent: 80
+imageMinimumGCAge: 2m0s
+kubeAPIBurst: 100
+kubeAPIQPS: 50
+makeIPTablesUtilChains: true
+maxOpenFiles: 1000000
+nodeLeaseDurationSeconds: 40
+nodeStatusReportFrequency: 1m0s
+nodeStatusUpdateFrequency: 10s
+oomScoreAdj: -999
+podPidsLimit: -1
+port: 10250
+readOnlyPort: 0
+{% if ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int > 16 %}
+resolvConf: /run/systemd/resolve/resolv.conf
+{% else %}
+resolvConf: /etc/resolv.conf
+{% endif %}
+runtimeRequestTimeout: 2m0s
+serializeImagePulls: true
+streamingConnectionIdleTimeout: 4h0m0s
+syncFrequency: 1m0s
+tlsCertFile: /etc/kubernetes/ssl/kubelet.pem
+tlsPrivateKeyFile: /etc/kubernetes/ssl/kubelet-key.pem

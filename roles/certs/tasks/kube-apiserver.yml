@@ -1,0 +1,22 @@
+---
+- name: Create kube-apiserver cert request
+  template:
+    src: apiserver-csr.json.j2
+    dest: certs/apiserver-csr.json
+
+- name: Create kube-apiserver cert key
+  shell: "cd certs/ && cfssl gencert \
+        -ca=ca.pem -ca-key=ca-key.pem \
+        -config=ca-config.json \
+        -profile=kubernetes apiserver-csr.json | cfssljson -bare apiserver"
+
+- name: Create aggregator proxy cert request
+  template:
+    src: aggregator-proxy-csr.json.j2
+    dest: certs/aggregator-proxy-csr.json
+
+- name: Create aggregator-proxy cert key
+  shell: "cd certs/ && cfssl gencert \
+        -ca=ca.pem -ca-key=ca-key.pem \
+        -config=ca-config.json \
+        -profile=kubernetes aggregator-proxy-csr.json | cfssljson -bare aggregator-proxy"

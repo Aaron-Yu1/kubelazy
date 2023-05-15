@@ -5,18 +5,55 @@
     src: hosts.j2
     dest: /etc/hosts
     backup: yes
-- name: Change resolv.conf file
+
+- name: Install software packages
+  apt:
+    name:
+      - chrony
+      - ipvsadm
+      - ipset
+      - bash-completion
+      - nfs-common
+    state: present
+    update_cache: yes
+- name: Disabled swap 1
   lineinfile:
-    path: /etc/systemd/resolved.conf
-    regexp: '#DNS='
-    line: DNS={{ dns }}
-- name: Create link file
-  file:
-    src: /run/systemd/resolve/resolv.conf
-    dest: /etc/resolv.conf
-    state: link
+    path: /etc/fstab
+    regexp: 'swap'
+    state: absent
+    backup: 'yes'
+- name: Disabled swap 2
+  shell: "swapoff -a"
+
+- name: Copy modules file
+  template:
+    src: k8s-modules.conf.j2
+    dest: /etc/modules-load.d/k8s-modules.conf
+- name: Upload modules
+  modprobe:
+    name: "{{ item }}" 
+    state: present
+  with_items:
+    - br_netfilter
+    - ip_vs
+    - ip_vs_rr
+    - ip_vs_wrr
+    - ip_vs_sh
+    - nf_conntrack
+
+- name: Copy sysctl file
+  template:
+    src: k8s.conf.j2
+    dest: /etc/sysctl.d/k8s.conf
+- name: Apply sysctl file
+  shell: "sysctl -p /etc/sysctl.d/k8s.conf"
+
 - name: time zone
-  shell: timedatectl set-timezone {{ timezone }} 
+  shell: timedatectl set-timezone {{ TIMEZONE }} 
 - name: Disabled RTC sync
   shell: timedatectl set-local-rtc false
 
+- name: Crate kubernetes directior
+  file:
+    path: /etc/kubernetes/
+    state: directory
