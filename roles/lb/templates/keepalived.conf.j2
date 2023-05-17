@@ -11,9 +11,9 @@ vrrp_script checkhaproxy {
 }
 
 vrrp_instance VI_1 {
-    state {{ state }}
-    priority {{ priority }}
-    interface {{ interface }}
+    state {{ STATE }}
+    priority {{ PRIORITY }}
+    interface {{ INTREFACE }}
     garp_master_delay 10
     smtp_alert
     virtual_router_id 88
@@ -23,7 +23,7 @@ vrrp_instance VI_1 {
         auth_pass 1111
     }
     virtual_ipaddress {
-        192.168.3.220/24 dev {{ interface }}
+        {{ VIP_ADDRESS }}/24 dev {{ INTREFACE }}
     }
     track_script {
         checkproxy

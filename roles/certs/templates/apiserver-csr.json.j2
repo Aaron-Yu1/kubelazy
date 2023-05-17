@@ -2,6 +2,9 @@
   "CN": "kubernetes",
   "hosts": [
     "127.0.0.1",
+{% if groups['ha']|length > 0 %}
+    "{{ VIP_ADDRESS }}",
+{% endif %}
 {% for host in CLUSTER_HOSTS %}
     "{{ host }}",
 {% endfor %}

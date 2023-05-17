@@ -42,7 +42,8 @@ frontend kube-apiserver
 listen stats
     mode                http
     bind                *:8888
-    stats auth          {{ user }}:{{ password }}
+    stats enable
+    stats auth          {{ USER }}:{{ PASSWORD }}
     stats refresh       5s
     stats realm         HAProxy\ Statistics
     stats uri           /stats

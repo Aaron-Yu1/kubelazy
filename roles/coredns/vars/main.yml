@@ -1,3 +1,4 @@
 ---
 # vars file for coredns
-coredns_version: 1.9.4
+COREDNS_VERSION: 1.9.4
+CLUSTER_DNS_SVC_IP: "{{ SERVICE_CIDR.split('.')[0] }}.{{ SERVICE_CIDR.split('.')[1] }}.{{ SERVICE_CIDR.split('.')[2] }}.{{ SERVICE_CIDR.split('.')[3]|int + 2 }}"

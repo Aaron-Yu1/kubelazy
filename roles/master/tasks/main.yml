@@ -73,3 +73,14 @@
     src: certs/kubectl.kubeconfig
     dest: ~/.kube/config
     mode: 0400
+
+- name: Get user:kubernetes role binding info
+  shell: "kubectl get clusterrolebindings | grep kubelet-api-admin || echo 'notfound'"
+  register: crb_info
+  run_once: true
+
+- name: Create user:kubernetes role binding
+  shell: "kubectl create clusterrolebinding system:kubelet-api-admin \
+          --clusterrole=system:kubelet-api-admin --user=kubernetes"
+  run_once: true
+  when: "'notfound' in crb_info.stdout"

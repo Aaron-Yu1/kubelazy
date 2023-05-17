@@ -59,7 +59,7 @@ data:
           lameduck 5s
         }
         ready
-        kubernetes devcoffee.local in-addr.arpa ip6.arpa {
+        kubernetes {{ CLUSTER_DNS_DOMAIN }} in-addr.arpa ip6.arpa {
           fallthrough in-addr.arpa ip6.arpa
         }
         prometheus :9153
@@ -188,7 +188,7 @@ spec:
   selector:
     k8s-app: kube-dns
     app.kubernetes.io/name: coredns
-  clusterIP: 172.16.0.2
+  clusterIP: {{ CLUSTER_DNS_SVC_IP }}
   ports:
   - name: dns
     port: 53

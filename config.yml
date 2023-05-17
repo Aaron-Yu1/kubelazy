@@ -8,3 +8,7 @@ NODE_CIDR_LEN: 24
 CLUSTER_NAME: k8s
 KUBE_APISERVER: "{{ groups['master'][0] }}"
 PROXY_MODE: ipvs
+CLUSTER_NETWORK: calico
+CLUSTER_DNS: coredns
+CLUSTER_DNS_DOMAIN: devcoffee.local
+VIP_ADDRESS: 192.168.3.205

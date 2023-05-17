@@ -20,7 +20,12 @@
     src: check-haproxy.sh
     dest: /usr/bin/check-haproxy.sh
     mode: 755
-- name: Set the service to start upon startup
-  shell: systemctl daemon-reload && systemctl enable haproxy.service && systemctl enable keepalived.service
-- name: Rstart service
-  shell: systemctl restart haproxy.service && systemctl restart keepalived.service
+- name: Restart the services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  with_items:
+    - haproxy.service
+    - keepalived.service

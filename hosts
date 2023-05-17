@@ -14,8 +14,8 @@
 192.168.3.192 K8S_NODE_NAME=testwork2
 
 [ha]
-#192.168.3.221 state=MASTER priority=100
-#192.168.3.222 state=BACKUP priority=90
+#192.168.3.221 STATE=MASTER PRIORITY=100
+#192.168.3.222 STATE=BACKUP PRIORITY=90
 
 # 基于需要，选择是否安装 harbor，如果需要，更改到对应的地址，并取消注释。
 [harbor]

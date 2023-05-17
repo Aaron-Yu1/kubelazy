@@ -8,8 +8,20 @@
       mode: 777
   - name: Copy calico yaml file
     template:
-      src: calico-{{ calico_version }}.yaml.j2
-      dest: /yaml/calico-{{ calico_version }}.yaml
+      src: calico-{{ CALICO_VERSION }}.yaml.j2
+      dest: /yaml/calico-{{ CALICO_VERSION }}.yaml
   - name: Install network plug-in
-    shell: kubectl apply -f /yaml/calico-{{ calico_version }}.yaml
+    shell: kubectl apply -f /yaml/calico-{{ CALICO_VERSION }}.yaml
   run_once: true
+  when: "inventory_hostname in groups['master']"
+
+- name: wait for calico-node pods to come up
+  shell: "kubectl get pod -n kube-system -o wide|grep 'calico-node'|grep ' {{ item }} '|awk '{print $3}'"
+  register: pod_status
+  until: pod_status.stdout == "Running" 
+  retries: 20
+  delay: 15
+  loop: "{{ groups['work'] }}"
+  run_once: true
+  when: "inventory_hostname in groups['master']"
+
