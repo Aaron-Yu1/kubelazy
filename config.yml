@@ -1,5 +1,8 @@
 ---
-# var
+# 此文件用于定义 Ansible 在执行过程中使用的变量，这些变量根据环境的不同，具体的值可能有很大的差异。
+############################
+#
+###########################
 SECURE_PORT: 6443
 SERVICE_CIDR: 172.16.0.0/16
 NODE_PORT_RANGE: 30000-32767
@@ -11,4 +14,4 @@ PROXY_MODE: ipvs
 CLUSTER_NETWORK: calico
 CLUSTER_DNS: coredns
 CLUSTER_DNS_DOMAIN: devcoffee.local
-VIP_ADDRESS: 192.168.3.205
+VIP_ADDRESS: 192.168.3.190

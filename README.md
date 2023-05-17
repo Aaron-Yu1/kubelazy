@@ -5,10 +5,10 @@
   Ubuntu 20.04
 
 Kubernetes 版本：
-  1.26.1
+  1.26
 
 etcd 版本
-  3.5.5
+  3.5.6
 
 containerd 版本
   1.6.14
@@ -20,18 +20,28 @@ containerd 版本
 ```bash
 git clone https://github.com/Aaron-Yu1/kubelazy.git
 
-cd kubelazy/bin
-etcd_version=v3.5.5
-wget https://github.com/coreos/etcd/releases/download/${etcd_version}/etcd-${etcd_version}-linux-amd64.tar.gz
-tar -zxf etcd-${etcd_version}-linux-amd64.tar.gz
+cd kubelazy
 
-k8s_version=v1.26.1
-wget https://dl.k8s.io/${k8s_version}/kubernetes-server-linux-amd64.tar.gz
+mkdir bin
+
+cd bin
+
+# 下载 cfssl
+wget https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssljson_1.6.3_linux_amd64 -O cfssljson
+wget https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssl_1.6.3_linux_amd64 -O cfssl
+chmod +x cfss*
+
+# 下载 etcd
+wget https://github.com/etcd-io/etcd/releases/download/v3.5.6/etcd-v3.5.6-linux-amd64.tar.gz
+tar -zxf etcd-v3.5.6-linux-amd64.tar.gz
+
+# 下载 kubernetes
+wget https://dl.k8s.io/v1.26.4/kubernetes-server-linux-amd64.tar.gz
 tar -zxf kubernetes-server-linux-amd64.tar.gz
 
-runtime_version=1.6.14
-wget https://github.com/containerd/containerd/releases/download/v${runtime_version}/cri-containerd-cni-${runtime_version}-linux-amd64.tar.gz
-tar -zxf cri-containerd-cni-${runtime_version}-linux-amd64.tar.gz
+下载runtime（containerd，目前只支持 containerd）
+wget https://github.com/containerd/containerd/releases/download/v1.6.19/cri-containerd-cni-1.6.19-linux-amd64.tar.gz
+tar -zxf cri-containerd-cni-1.6.19-linux-amd64.tar.gz
 
 cd ..
 
@@ -47,5 +57,8 @@ https://github.com/goharbor/harbor/releases/download/v2.6.3/harbor-offline-insta
 
 ansible-playbook harbor.yml
 ```
+
+安装过程说明：
+[初始化操作系统](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/prepare/README.md)
 
 未完，待续...
