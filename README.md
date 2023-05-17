@@ -1,21 +1,21 @@
 通过 Ansible 部署 Kubernetes
   
 
-支持的操作系统：
+支持的操作系统：  
   Ubuntu 20.04
 
-Kubernetes 版本：
+Kubernetes 版本：  
   1.26
 
-etcd 版本
+etcd 版本:  
   3.5.6
 
-containerd 版本
+containerd 版:  
   1.6.14
 
 ### 快速开始
-需要使用 root 用户运行，并配置 ssh 免密登录
-需要更改 hosts， 添加自己的服务器地址
+需要使用 root 用户运行，并配置 ssh 免密登录。   
+需要更改 hosts， 添加自己的服务器地址。  
 
 ```bash
 git clone https://github.com/Aaron-Yu1/kubelazy.git
@@ -58,7 +58,7 @@ https://github.com/goharbor/harbor/releases/download/v2.6.3/harbor-offline-insta
 ansible-playbook harbor.yml
 ```
 
-安装过程说明：
+安装过程说明：  
 [初始化操作系统](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/prepare/README.md)
 
 未完，待续...
