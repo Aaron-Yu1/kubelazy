@@ -74,6 +74,12 @@
     dest: ~/.kube/config
     mode: 0400
 
+- name: Change admin-config file
+  lineinfile:
+    dest: ~/.kube/config
+    regexp: "^    server"
+    line: "    server: https://{{ VIP_ADDRESS }}:{{ SECURE_PORT }}"
+
 - name: Get user:kubernetes role binding info
   shell: "kubectl get clusterrolebindings | grep kubelet-api-admin || echo 'notfound'"
   register: crb_info

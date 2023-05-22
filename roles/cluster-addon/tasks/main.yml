@@ -1,0 +1,6 @@
+---
+# tasks file for cluster-addon
+- name: Deploy Dashboard
+  import_tasks: dashboard.yml
+  tags: install_dashboard
+  run_once: true

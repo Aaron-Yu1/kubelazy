@@ -30,14 +30,6 @@
       when:
         - "groups['ha']|length > 0"
         - "inventory_hostname in groups['ha']"
-
-- name: Change admin kube-config file
-  hosts: master
-  vars_files:
-    - config.yml
-  tasks:
-    - name: Change admin-config file
-      lineinfile:
-        dest: ~/.kube/config
-        regexp: "^    server"
-        line: "    server: https://{{ VIP_ADDRESS }}:{{ SECURE_PORT }}"
+    - name: Deployment Cluster-addon
+      role: cluster-addon
+      when: "inventory_hostname in groups['master']"

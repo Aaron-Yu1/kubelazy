@@ -2,16 +2,16 @@
   
 
 支持的操作系统：  
-  Ubuntu 20.04
+- Ubuntu 20.04
 
 Kubernetes 版本：  
-  1.26
+- 1.26
 
 etcd 版本:  
-  3.5.6
+- 3.5.6
 
 containerd 版:  
-  1.6.14
+- 1.6.14
 
 ### 快速开始
 需要使用 root 用户运行，并配置 ssh 免密登录。   
@@ -59,6 +59,6 @@ ansible-playbook harbor.yml
 ```
 
 安装过程说明：  
-[初始化操作系统](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/prepare/README.md)
+- [初始化操作系统](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/prepare/README.md)
 
 未完，待续...

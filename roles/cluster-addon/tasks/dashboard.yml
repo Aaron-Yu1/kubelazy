@@ -1,0 +1,20 @@
+---
+# Deployment dashboard
+- block:
+    - name: Check the /yaml/dashboard directopry
+      file: 
+        path: /yaml/dashboard
+        state: directory
+    
+    - name: Copy file to /yaml
+      template:
+        src: "{{ item }}.j2"
+        dest: /yaml/dashboard/{{ item }}
+      with_items:
+        - dashboard.yaml 
+        - dashboard-rbac-admin-user.yaml
+        - dashboard-rbac-read-user.yaml 
+    
+    - name: Deployment dashboard
+      shell: "kubectl apply -f /yaml/dashboard"
+  when: 'Kubernete_Dashboar_Install == "True"'
