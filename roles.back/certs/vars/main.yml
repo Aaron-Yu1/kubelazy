@@ -1,7 +1,0 @@
----
-# vars file for certs
-domain_name: devcoffee.local
-root_ca_expire: 3650
-expire_day: 365
-vip_address: 192.168.3.220
-master_service_address: 172.16.0.1

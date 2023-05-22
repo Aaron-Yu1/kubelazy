@@ -1,6 +1,0 @@
----
-# vars file for node
-sandbox_image: registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6
-dns_address: 172.16.0.2
-domain_name: devcoffee.local
-vip_address: 192.168.3.220

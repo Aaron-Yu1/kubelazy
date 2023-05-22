@@ -1,4 +1,0 @@
----
-# vars file for calico
-calico_version: v3.25
-pod_address_range: 192.168.0.0/16
