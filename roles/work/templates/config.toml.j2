@@ -151,6 +151,10 @@ version = 2
       [plugins."io.containerd.grpc.v1.cri".registry.headers]
 
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+{% if INSTALL_HARBOR %}
+          [plugins."io.containerd.grpc.v1.cri".registry.configs."{{ HARBOR_DOMAIN }}".tls]
+          ca_file   = "/etc/containerd/root.pem"
+{% endif %}
 
     [plugins."io.containerd.grpc.v1.cri".x509_key_pair_streaming]
       tls_cert_file = ""

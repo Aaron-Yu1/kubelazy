@@ -53,9 +53,13 @@ ansible-playbook kubelazy.yml
 
 如果安装 harbor, 同样也需要下载 harbor 的二进制文件，并解压到 bin 目录。
 ```bash
-https://github.com/goharbor/harbor/releases/download/v2.6.3/harbor-offline-installer-v2.6.3.tgz
+cd bin
 
-ansible-playbook harbor.yml
+wget https://github.com/goharbor/harbor/releases/download/v2.5.6/harbor-offline-installer-v2.5.6.tgz
+
+# 只安装 harbor。
+# 部署完成后，需要更改 runtime 的配置，以便 kubernetes 可以从 harbor 下载镜像。
+ansible-playbook kubelazy.yml --tags "install_harbor"
 ```
 
 安装过程说明：  

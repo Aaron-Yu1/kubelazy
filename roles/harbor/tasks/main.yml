@@ -1,0 +1,95 @@
+---
+- name: Add apt key and repo
+  block:
+    - name: somerepo that no apt key
+      get_url:
+        url: http://mirror.nju.edu.cn/docker-ce/linux/ubuntu//gpg
+        dest: /etc/apt/trusted.gpg.d/dockerrepo.asc
+    - name: somerepo | apt source
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/dockerrepo.asc] \
+               http://mirror.nju.edu.cn/docker-ce/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+- name: Install docker-ce and docker-compose
+  apt:
+    pkg:
+      - docker-ce 
+      - docker-ce-cli
+      - docker-compose
+    state: present
+    update_cache: yes
+- name: Unarchive harbor folder
+  unarchive:
+    src: bin/harbor-offline-installer-{{ HARBOR_VERSION }}.tgz
+    dest: /
+- name: Copy harbor.yml file
+  template:
+    src: harbor.yml.j2
+    dest: /harbor/harbor.yml
+- name: Create cert
+  block:
+    - name: Check the certs directory
+      stat:
+        path: certs/
+      register: d
+    - name: Create the certs directory
+      file:
+        path: certs/
+        state: directory
+      when: "d.stat.isreg is not defined"
+    - name: Check the root ca
+      stat:
+        path: certs/ca.pem
+      register: root
+    - block:
+        - name: Copy cert request file
+          template:
+            src: "roles/certs/templates/{{ item }}.j2"
+            dest: certs/{{ item }}
+          with_items:
+            - ca-config.json
+            - ca-csr.json
+        - name: Create CA key
+          shell: "cd certs/ && ../bin/cfssl gencert \
+                   -initca ca-csr.json | ../bin/cfssljson -bare ca"
+      when: "p.stat.isreg is not defined"
+
+    - name: Create harbor cert request
+      template:
+        src: harbor-csr.json.j2 
+        dest: certs/harbor-csr.json
+
+    - name: Create harbor cert
+      shell: "cd certs/ && ../bin/cfssl gencert \
+              -ca=ca.pem -ca-key=ca-key.pem \
+              -config=ca-config.json \
+              -profile=kubernetes harbor-csr.json | ../bin/cfssljson -bare harbor"
+  delegate_to: localhost
+- name: create a directory for cert
+  file:
+    path: /data/cert
+    state: directory
+- name: Copy cert file to cert dir
+  copy:
+    src: certs/{{ item }}
+    dest: /data/cert
+  with_items:
+    - harbor.pem
+    - harbor-key.pem
+- name: create a direcoty for docker
+  file:
+    path: /etc/docker/certs.d/harbor
+    state: directory
+- name: Copy cert file to docker
+  copy:
+    src: certs/{{ item }}
+    dest: /etc/docker/certs.d/harbor
+  with_items:
+    - harbor.pem
+    - harbor-key.pem
+    - ca.pem
+- name: restart docker service
+  shell: systemctl restart docker.service
+- name: install harbor
+  shell: "cd /harbor && \
+          ./install.sh >> /tmp/harbor-`date +'%Y%m%d%H%M%S'`.log 2>&1"

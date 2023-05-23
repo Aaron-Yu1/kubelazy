@@ -21,3 +21,10 @@ VIP_ADDRESS: 192.168.3.190
 #Kubernetes 可选插件
 ###########################
 Kubernete_Dashboar_Install: "True"
+
+
+############################
+# Harbor
+###########################
+INSTALL_HARBOR: true
+HARBOR_DOMAIN: harbor.devcoffee.local

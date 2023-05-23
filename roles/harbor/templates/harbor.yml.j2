@@ -2,7 +2,7 @@
 
 # The IP address or hostname to access admin UI and registry service.
 # DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
-hostname: {{ ansible_facts['nodename'] }}
+hostname: {{ HARBOR_DOMAIN }}
 
 # http related config
 http:
@@ -14,8 +14,8 @@ https:
   # https port for harbor, default is 443
   port: 443
   # The path of cert and key files for nginx
-  certificate: /data/cert/harbor.crt
-  private_key: /data/cert/harbor.key
+  certificate: /data/cert/harbor.pem
+  private_key: /data/cert/harbor-key.pem
 
 # # Uncomment following will enable tls communication between all harbor components
 # internal_tls:
@@ -31,12 +31,12 @@ https:
 # The initial password of Harbor admin
 # It only works in first time to install harbor
 # Remember Change the admin password from UI after launching Harbor.
-harbor_admin_password: P@ssw0rd
+harbor_admin_password: {{ HARBOR_ADMIN_PASSWORD }}
 
 # Harbor DB configuration
 database:
   # The password for the root user of Harbor DB. Change this before any production use.
-  password: root123
+  password: {{ DATABASE_PASSWORD }}
   # The maximum number of connections in the idle connection pool. If it <=0, no idle connections are retained.
   max_idle_conns: 100
   # The maximum number of open connections to the database. If it <= 0, then there is no limit on the number of open connections.

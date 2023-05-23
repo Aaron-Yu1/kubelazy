@@ -33,3 +33,9 @@
     - name: Deployment Cluster-addon
       role: cluster-addon
       when: "inventory_hostname in groups['master']"
+    - name: Deployment Harbor
+      role: harbor
+      tags: install_harbor
+      when:
+        - "groups['harbor']|length > 0"
+        - "inventory_hostname in groups['harbor']"
