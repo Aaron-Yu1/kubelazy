@@ -41,3 +41,4 @@
       shell: "scp certs/kubectl.kubeconfig 192.168.3.101:~/.kube/config && \
               scp certs/kubectl.kubeconfig 192.168.3.102:~/.kube/config && \
               scp certs/kubectl.kubeconfig 192.168.3.103:~/.kube/config"
+  connection: local
