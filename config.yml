@@ -37,8 +37,8 @@ CLUSTER_DNS_DOMAIN: devcoffee.local
 Kubernete_Dashboar_Install: "True"
 
 
-############################
-# Harbor
-###########################
-INSTALL_HARBOR: true
-HARBOR_DOMAIN: harbor.devcoffee.local
+# Harbor 配置
+# 无论是否安装 harbor，不要注释掉INSTALL_HARBOR，因为配置 containerd 的时候需要使用到该变量，如果不需要安装 harbor，则将此值改为 FALSE 即可。
+# 你也可以通过设置此值为 true，并将 HARBOR_DOMAIN 改成自己的harbor 地址。
+INSTALL_HARBOR: false
+#HARBOR_DOMAIN: harbor.devcoffee.local
