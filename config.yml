@@ -1,25 +1,39 @@
 ---
 # 此文件用于定义 Ansible 在执行过程中使用的变量，这些变量根据环境的不同，具体的值可能有很大的差异。
-############################
-#
-###########################
+# API server 的地址以及使用的端口
+KUBE_APISERVER: "{{ groups['master'][0] }}"
 SECURE_PORT: 6443
+
+# kubernetes service 的网络范围，以及NodePort 模式下可以使用的端口范围
 SERVICE_CIDR: 172.16.0.0/16
 NODE_PORT_RANGE: 30000-32767
+
+# Pod 可以使用的网络范围，以及单个节点上面 Pod 可以使用的网络大小
 CLUSTER_CIDR: 10.0.0.0/16
 NODE_CIDR_LEN: 24
+
+# 群集的名称
 CLUSTER_NAME: k8s
-KUBE_APISERVER: "{{ groups['master'][0] }}"
+
+# kube-proxy 使用的模式，ipvs 或 iptables
 PROXY_MODE: ipvs
+
+# VIP 地址
+VIP_ADDRESS: 192.168.3.190
+
+# 如果有自己的loadbalancer，或者自定义的域名，可以添加到这里
+CLUSTER_HOSTS:
+  - 192.168.3.220
+
+# 定义 etcd 的版本
+etcd_version: v3.5.6
+
+# Kubernetes 可选插件
 CLUSTER_NETWORK: calico
 CLUSTER_DNS: coredns
 CLUSTER_DNS_DOMAIN: devcoffee.local
-VIP_ADDRESS: 192.168.3.190
 
-
-############################
-#Kubernetes 可选插件
-###########################
+# Kubernetes 可选插件
 Kubernete_Dashboar_Install: "True"
 
 

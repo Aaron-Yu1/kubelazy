@@ -26,8 +26,8 @@
   when: "p.stat.isreg is not defined"
 
 - name: Create CA key
-  shell: "cd certs/ && cfssl gencert \
-                       -initca ca-csr.json | cfssljson -bare ca" 
+  shell: "cd certs/ && ../bin/cfssl gencert \
+                       -initca ca-csr.json | ../bin/cfssljson -bare ca" 
   when: "p.stat.isreg is not defined"
 
 - name: Get etcd cert info

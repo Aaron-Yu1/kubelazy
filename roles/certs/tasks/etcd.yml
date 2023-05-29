@@ -6,7 +6,7 @@
 
 - name: Create etcd cert key
   shell: "cd certs/ && \
-          cfssl gencert -ca=ca.pem \
+          ../bin/cfssl gencert -ca=ca.pem \
           -ca-key=ca-key.pem \
           -config=ca-config.json \
-          -profile=kubernetes etcd-csr.json | cfssljson -bare etcd"
+          -profile=kubernetes etcd-csr.json | ../bin/cfssljson -bare etcd"

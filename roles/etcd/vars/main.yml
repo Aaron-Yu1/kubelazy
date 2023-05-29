@@ -1,5 +1,4 @@
 ---
 # vars file for etcd
-etcd_version: v3.5.6
 TMP_NODES: "{% for h in groups['etcd'] %}etcd-{{ hostvars[h]['ansible_facts']['hostname'] }}=https://{{ h }}:2380,{% endfor %}"
 ETCD_NODES: "{{ TMP_NODES.rstrip(',') }}"
