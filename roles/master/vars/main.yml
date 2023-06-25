@@ -1,4 +1,4 @@
 ---
 # vars file for master
-TMP_ENDPOINTS: "{% for h in groups.etcd %}https://{{ h }}:2379,{% endfor %}"
+TMP_ENDPOINTS: "{% for h in groups.etcd %}https://{{ hostvars[h]['ansible_facts']['default_ipv4']['address'] }}:2379,{% endfor %}"
 ETCD_ENDPOINTS: "{{ TMP_ENDPOINTS.rstrip(',') }}"

@@ -2,7 +2,7 @@
   "CN": "harbor",
   "hosts": [
     "127.0.0.1",
-    "{{ inventory_hostname }}",
+    "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}",
     "{{ HARBOR_DOMAIN }}"
   ],
   "key": {

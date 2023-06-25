@@ -2,7 +2,7 @@
 - name: Deploy kubernetes
   hosts: all
   vars_files:
-    - config.yml
+    - config/config.yml
   roles:
     - name: Initialize the OS
       role: prepare

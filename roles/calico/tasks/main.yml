@@ -16,7 +16,7 @@
   when: "inventory_hostname in groups['master']"
 
 - name: wait for calico-node pods to come up
-  shell: "kubectl get pod -n kube-system -o wide|grep 'calico-node'|grep ' {{ item }} '|awk '{print $3}'"
+  shell: "kubectl get pod -n kube-system -o wide|grep 'calico-node'|grep ' {{ hostvars[item]['ansible_facts']['default_ipv4']['address'] }} '|awk '{print $3}'"
   register: pod_status
   until: pod_status.stdout == "Running" 
   retries: 20

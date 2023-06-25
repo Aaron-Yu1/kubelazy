@@ -1,15 +1,16 @@
 ---
 # 此文件用于定义 Ansible 在执行过程中使用的变量，这些变量根据环境的不同，具体的值可能有很大的差异。
 # API server 的地址以及使用的端口
-KUBE_APISERVER: "{{ groups['master'][0] }}"
+API_SERVER_IP: "{{ groups['master'][0] }}"
+KUBE_APISERVER: "{{ hostvars[API_SERVER_IP]['ansible_default_ipv4']['address'] }}"
 SECURE_PORT: 6443
 
 # kubernetes service 的网络范围，以及NodePort 模式下可以使用的端口范围
-SERVICE_CIDR: 172.16.0.0/16
+SERVICE_CIDR: 192.168.0.0/16
 NODE_PORT_RANGE: 30000-32767
 
 # Pod 可以使用的网络范围，以及单个节点上面 Pod 可以使用的网络大小
-CLUSTER_CIDR: 10.0.0.0/16
+CLUSTER_CIDR: 172.16.0.0/16
 NODE_CIDR_LEN: 24
 
 # 群集的名称

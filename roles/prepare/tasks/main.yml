@@ -14,7 +14,8 @@
       - ipset
       - bash-completion
       - nfs-common
-    state: present
+      - libseccomp2
+    state: latest
     update_cache: yes
 - name: Disabled swap 1
   lineinfile:

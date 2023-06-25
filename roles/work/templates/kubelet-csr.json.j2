@@ -2,7 +2,7 @@
   "CN": "system:node:{{ K8S_NODE_NAME }}",
   "hosts": [
     "127.0.0.1",
-    "{{ inventory_hostname }}",
+    "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}",
     "{{ K8S_NODE_NAME }}"
   ],
   "key": {

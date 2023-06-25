@@ -9,7 +9,7 @@
     "{{ host }}",
 {% endfor %}
 {% for host in groups['master'] %}
-    "{{ host }}",
+    "{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }}",
 {% endfor %}
     "{{ CLUSTER_KUBERNETES_SVC_IP }}",
     "kubernetes",
