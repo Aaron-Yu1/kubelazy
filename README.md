@@ -15,7 +15,8 @@ containerd 版:
 
 ### 快速开始
 需要使用 root 用户运行，并配置 ssh 免密登录。   
-需要更改 hosts， 添加自己的服务器地址。  
+需要更改 inventory 目录下的hosts， 添加自己的服务器地址。以及 config 目录下的 config.yml 文件，该文件中定义了安装过程中需要的变量。
+关于软件版本等 role 本身相关的变量，可以在各个觉得的var 目录下的main.yml 文件中查看。
 
 ```bash
 git clone https://github.com/Aaron-Yu1/kubelazy.git
