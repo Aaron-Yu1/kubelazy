@@ -1,0 +1,5 @@
+---
+# vars file for roles/docker
+DOCKER_VERSION: "24.0.5"
+CRI_DOCKERD_PACKAGE: "cri-dockerd_0.3.7.3-0.ubuntu-jammy_amd64.deb"
+

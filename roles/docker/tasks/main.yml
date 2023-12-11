@@ -1,0 +1,82 @@
+---
+# tasks file for roles/docker
+- name: unarchive docker package
+  unarchive:
+    src: bin/docker-{{ DOCKER_VERSION }}.tgz
+    dest: /tmp
+- name: copy docker bin files to remote server
+  copy:
+    src: "/tmp/docker/"
+    dest: /usr/local/bin/
+    remote_src: yes
+- name: change mode of these files
+  file:
+    path: /usr/local/bin/
+    mode: '0775'
+    recurse: yes
+- name: create docker directory for daemon
+  file:
+    path: /etc/docker
+    state: directory
+- name: copy daemon file
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+- name: copy service files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/usr/lib/systemd/system/{{ item }}"
+  loop:
+    - containerd.service
+    - docker.socket
+    - docker.service
+- name: copy cri_dockerd package to remote server
+  copy: 
+    src: bin/{{ CRI_DOCKERD_PACKAGE }}
+    dest: /tmp/
+- name: check apt lock
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/lib/dpkg/lock-frontend
+    - /var/lib/dpkg/lock
+- name: isntall cri_dockerd
+  apt:
+    deb: /tmp/{{ CRI_DOCKERD_PACKAGE }}
+- name: install crictl
+  unarchive:
+    src: bin/cri-tools-crictl-v1.27.1-linux-amd64.tar.gz
+    dest: /usr/local/bin
+- name: change infra container address
+  lineinfile:
+    path: /lib/systemd/system/cri-docker.service
+    regexp: "^ExecStart="
+    line: "ExecStart=/usr/bin/cri-dockerd --container-runtime-endpoint fd:// --network-plugin=cni --pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.8"
+- name: change socket group of cri-docerd to root
+  lineinfile:
+    path: /usr/lib/systemd/system/cri-docker.socket
+    regexp: "^SocketGroup="
+    line: "SocketGroup=root"
+- name: config runtime-endpoint
+  shell: "crictl config runtime-endpoint unix:///run/cri-dockerd.sock"
+
+- name: start services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - containerd.service
+    - docker.socket
+    - docker.service
+    - cri-docker.service
+
+- name: delete packages of upload
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  loop:
+    - /tmp/docker/
+    - /tmp/{{ CRI_DOCKERD_PACKAGE }}

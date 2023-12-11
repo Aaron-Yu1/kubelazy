@@ -1,0 +1,3 @@
+---
+# vars file for roles/kubeadm
+KUBEADM_VERSION: "1.27.6-00"

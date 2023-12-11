@@ -1,5 +1,12 @@
 ---
 # tasks file for lb
+- name: check apt lock
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/lib/dpkg/lock-frontend
+    - - /var/lib/dpkg/lock
 - name: install HAProxy and keepalived
   apt: 
     name:
@@ -26,19 +33,6 @@
     state: restarted
     enabled: true
     daemon_reload: true
-  with_items:
+  loop:
     - haproxy.service
     - keepalived.service
-
-- name: Change .kube/config file
-  block:
-    - name: Change admin-config file
-      lineinfile:
-        dest: certs/kubectl.kubeconfig
-        regexp: "^    server"
-        line: "    server: https://{{ VIP_ADDRESS }}:{{ SECURE_PORT }}"
-    - name: Copy new config to master
-      shell: "scp certs/kubectl.kubeconfig 192.168.3.101:~/.kube/config && \
-              scp certs/kubectl.kubeconfig 192.168.3.102:~/.kube/config && \
-              scp certs/kubectl.kubeconfig 192.168.3.103:~/.kube/config"
-  connection: local

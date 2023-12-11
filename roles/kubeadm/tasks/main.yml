@@ -1,0 +1,44 @@
+---
+# tasks file for roles/kubeadm
+- name: add apt key and repository
+  block:
+    - name: add apt key
+      get_url:
+        url: https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg
+        dest: /etc/apt/keyrings/kubernetes-archive-keyring.asc
+
+    - name: add repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.asc] \
+              https://mirror.nju.edu.cn/kubernetes/apt/ kubernetes-xenial main"
+        state: present
+- name: install software package
+  apt:
+    name: "{{ item }}={{ KUBEADM_VERSION }}"
+    update_cache: true
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+- name: 
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+    - kubectl
+- name: copy crictl config file
+  template:
+    src: crictl.yaml.j2
+    dest: /etc/crictl.yml
+- name: copy kubeadm init file
+  template:
+    src: kubeadm.yaml.j2
+    dest: kubeadm.yml
+- name: init the master
+  shell: kubeadm init --config kubeadm.yaml
+  register: r
+- name: show init stdout
+  debug:
+    msg: "{{ r.stdout }}"

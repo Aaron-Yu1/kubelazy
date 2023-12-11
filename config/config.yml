@@ -1,5 +1,14 @@
 ---
 # 此文件用于定义 Ansible 在执行过程中使用的变量，这些变量根据环境的不同，具体的值可能有很大的差异。
+
+# INSTALL_MODE 表示安装 kubernetes 的方式，其值可以是 binary，kubeadm
+# binary 表示使用二进制的方式安装
+# kubeadm 表示使用 kubeadm 的方式安装
+INSTALL_MODE: "binary"
+
+# RUNTIME 定义 kubernetes 群集使用的 Runtime，其值可以是 containerd，docker
+RUNTIME: "docker"
+
 # API server 的地址以及使用的端口
 API_SERVER_IP: "{{ groups['master'][0] }}"
 KUBE_APISERVER: "{{ hostvars[API_SERVER_IP]['ansible_default_ipv4']['address'] }}"
@@ -20,14 +29,14 @@ CLUSTER_NAME: k8s
 PROXY_MODE: ipvs
 
 # VIP 地址
-VIP_ADDRESS: 192.168.3.190
+VIP_ADDRESS: 192.168.3.100
 
 # 如果有自己的loadbalancer，或者自定义的域名，可以添加到这里
 CLUSTER_HOSTS:
   - 192.168.3.220
 
 # 定义 etcd 的版本
-etcd_version: v3.5.6
+ETCD_VERSION: v3.5.9
 
 # Kubernetes 可选插件
 CLUSTER_NETWORK: calico

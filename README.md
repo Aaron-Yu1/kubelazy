@@ -40,9 +40,11 @@ tar -zxf etcd-v3.5.6-linux-amd64.tar.gz
 wget https://dl.k8s.io/v1.26.4/kubernetes-server-linux-amd64.tar.gz
 tar -zxf kubernetes-server-linux-amd64.tar.gz
 
-下载runtime（containerd，目前只支持 containerd）
-wget https://github.com/containerd/containerd/releases/download/v1.6.19/cri-containerd-cni-1.6.19-linux-amd64.tar.gz
-tar -zxf cri-containerd-cni-1.6.19-linux-amd64.tar.gz
+下载runtime
+- containerd
+    - wget https://github.com/containerd/containerd/releases/download/v1.6.19/cri-containerd-cni-1.6.19-linux-amd64.tar.gz
+- docker
+    - wget https://download.docker.com/linux/static/stable/x86_64/docker-24.0.5.tgz
 
 cd ..
 
@@ -65,5 +67,9 @@ ansible-playbook kubelazy.yml --tags "install_harbor"
 
 安装过程说明：  
 - [初始化操作系统](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/prepare/README.md)
+- [创建证书]
+- [部署 Load Balance（可选）](https://github.com/Aaron-Yu1/kubelazy/tree/main/roles/lb/README.md)
+- [部署 etcd]
+- [部署 master 节点]]
 
 未完，待续...

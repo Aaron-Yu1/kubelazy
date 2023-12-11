@@ -1,5 +1,9 @@
 ---
 # tasks file for etcd
+- name: unarchive docker package
+  unarchive:
+    src: bin/etcd-{{ ETCD_VERSION }}-linux-amd64.tar.gz
+    dest: /tmp
 - name: Create a directoy for etcd
   file:
     path: /etc/kubernetes/etcd/data
@@ -18,8 +22,9 @@
 
 - name: Copy the bin file
   copy:
-    src: bin/etcd-{{ etcd_version }}-linux-amd64/{{ item }}
+    src: /tmp/etcd-{{ ETCD_VERSION }}-linux-amd64/{{ item }}
     dest: /usr/local/bin
+    remote_src: yes
     mode: 755
   with_items:
     - etcd

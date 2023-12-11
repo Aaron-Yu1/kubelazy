@@ -1,11 +1,16 @@
 ---
 # tasks file for calico
+- name: get certs directory info
+  stat: 
+    path: /yaml
+  register: d
 - block:
   - name: Create a directory for yaml file
     file:
       path: /yaml
       state: directory
       mode: 777
+    when: "d.stat.isreg is not defined"
   - name: Copy calico yaml file
     template:
       src: calico-{{ CALICO_VERSION }}.yaml.j2

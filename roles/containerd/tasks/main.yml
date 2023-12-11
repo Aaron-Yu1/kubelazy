@@ -1,0 +1,34 @@
+---
+# tasks file for roles/containerd
+- name: unarchive containerd package
+  unarchive:
+    src: bin/cri-containerd-cni-{{ CONTAINERD_VERSION }}-linux-amd64.tar.gz
+    dest: /tmp
+- name: copy containerd files to remote server
+  copy:
+    src: "/tmp/{{ item }}"
+    dest: "{{ item }}"
+    remote_src: yes
+  loop:
+    - /usr/local/bin/
+    - /usr/local/sbin/
+    - /opt/cni
+    - /opt/containerd
+    - /etc/cni
+    - /etc/crictl.yaml
+    - /etc/systemd/system/containerd.service
+- name: create a directory for config file
+  file:
+    path: /etc/containerd
+    state: directory
+- name: copy config files
+  template:
+    src: config.toml.j2
+    dest: /usr/lib/systemd/system/config.toml
+- name: start the service
+  systemd:
+    name: containerd.service
+    state: started
+    enabled: true
+    daemon_reload: true
+    

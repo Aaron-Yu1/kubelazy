@@ -1,0 +1,9 @@
+---
+# handlers file for roles/prepare
+- name: restart service
+  service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - chrony
+    - chronyd

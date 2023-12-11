@@ -1,0 +1,25 @@
+---
+# 后续插件安装
+- block:
+  - name: Deploy cluster network
+    include_role:
+      name: calico
+    when: "CLUSTER_NETWORK == 'calico'"
+      
+  - name: Deploy cluster dns
+    include_role:
+      name: coredns
+    when: "CLUSTER_DNS == 'coredns'"
+
+  - name: Deployment Cluster-addon
+    include_role:
+      name:  cluster-addon
+  when: "inventory_hostname in groups['master']"
+
+- name: Deployment Harbor
+  include_role:
+    name: harbor
+  tags: install_harbor
+  when:
+    - "groups['harbor']|length > 0"
+    - "inventory_hostname in groups['harbor']"

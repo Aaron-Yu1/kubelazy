@@ -13,7 +13,7 @@ vrrp_script checkhaproxy {
 vrrp_instance VI_1 {
     state {{ STATE }}
     priority {{ PRIORITY }}
-    interface {{ INTREFACE }}
+    interface {{ ansible_default_ipv4['alias'] }}
     garp_master_delay 10
     smtp_alert
     virtual_router_id 88
@@ -23,7 +23,7 @@ vrrp_instance VI_1 {
         auth_pass 1111
     }
     virtual_ipaddress {
-        {{ VIP_ADDRESS }}/24 dev {{ INTREFACE }}
+        {{ VIP_ADDRESS }}/24 dev {{ ansible_default_ipv4['alias'] }}
     }
     track_script {
         checkproxy

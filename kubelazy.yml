@@ -4,38 +4,30 @@
   vars_files:
     - config/config.yml
   roles:
-    - name: Initialize the OS
-      role: prepare
     - name: Create certs
       role: certs
       delegate_to: localhost
       run_once: true
-    - name: Deploy etcd
-      role: etcd
-      when: "inventory_hostname in groups['etcd']"
-    - name: Deploy master node
-      role: master
-      when: "inventory_hostname in groups['master']" 
-    - name: Deploy work node
-      role: work
-      when: "inventory_hostname in groups['work']"
-    - name: Deploy cluster network
-      role: calico
-      when: "CLUSTER_NETWORK == 'calico'"
-    - name: Deploy cluster dns
-      role: coredns
-      when: "CLUSTER_DNS == 'coredns'"
+      when: INSTALL_MODE == 'binary'
+
+    - name: Initialize the OS
+      role: prepare
+      tags: prepare os
+
     - name: Deploy LB
       role: lb
       when:
         - "groups['ha']|length > 0"
         - "inventory_hostname in groups['ha']"
-    - name: Deployment Cluster-addon
-      role: cluster-addon
-      when: "inventory_hostname in groups['master']"
-    - name: Deployment Harbor
-      role: harbor
-      tags: install_harbor
-      when:
-        - "groups['harbor']|length > 0"
-        - "inventory_hostname in groups['harbor']"
+      tags: deploy lb
+  tasks:
+    - include_tasks: kubeadm.yml
+      when: INSTALL_MODE == 'kubeadm'
+
+    - include_tasks: binary.yml
+      when: INSTALL_MODE == 'binary'
+
+    - include_tasks: plugins.yml
+      
+
+

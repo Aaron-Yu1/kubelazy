@@ -1,7 +1,7 @@
 ---
 # Deployment dashboard
 - block:
-    - name: Check the /yaml/dashboard directopry
+    - name: Create the /yaml/dashboard directopry
       file: 
         path: /yaml/dashboard
         state: directory

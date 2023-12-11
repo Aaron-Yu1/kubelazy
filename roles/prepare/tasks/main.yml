@@ -6,6 +6,14 @@
     dest: /etc/hosts
     backup: yes
 
+- name: check apt lock
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/lib/dpkg/lock
+    - /var/lib/dpkg/lock-frontend
+
 - name: Install software packages
   apt:
     name:
@@ -16,7 +24,7 @@
       - nfs-common
       - libseccomp2
     state: latest
-    update_cache: yes
+    update_cache: true
 - name: Disabled swap 1
   lineinfile:
     path: /etc/fstab
@@ -28,13 +36,14 @@
 
 - name: Copy modules file
   template:
-    src: k8s-modules.conf.j2
+    src: modules.conf.j2
     dest: /etc/modules-load.d/k8s-modules.conf
 - name: Upload modules
   modprobe:
     name: "{{ item }}" 
     state: present
-  with_items:
+  loop:
+    - overlay
     - br_netfilter
     - ip_vs
     - ip_vs_rr
@@ -53,6 +62,16 @@
   shell: timedatectl set-timezone {{ TIMEZONE }} 
 - name: Disabled RTC sync
   shell: timedatectl set-local-rtc false
+
+- name: time sync
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  notify: restart service
 
 - name: Crate kubernetes directior
   file:
