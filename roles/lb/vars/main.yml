@@ -1,4 +1,34 @@
 ---
-# vars file for lb
+# Keepalived config
+keepalived_version: 2.3.2
+keepalived_src_dir: /tmp
+keepalived_activate_script: true
+keepalived_script_user: "haproxy"
+keepalived_script_group: "haproxy"
+keepalived_enable_process_tracking: true
+keepalived_track_process: "haproxy"
+keepalived_interface: "{{ ansible_default_ipv4.interface }}"
+keepalived_virtual_router_id: 51
+keepalived_unicast_src_ip: "{{ ansible_default_ipv4.address }}"
+keepalived_virtual_ip_address: "192.168.3.254/24"
+keepalived_virtual_ipaddress_config: "{{ keepalived_virtual_ip_address }} dev {{ keepalived_interface }}"
+keepalived_auth_pass: "changeme"
+keepalived_pid_file_path: "/run/keepalived/keepalived.pid"
+keepalived_executable_path: "/usr/local/sbin/keepalived"
+keepalived_conf_dir: "/etc/keepalived"
+keepalived_conf_file_path: "{{ keepalived_conf_dir }}/keepalived.conf"
+keepalived_sysconfig_file_path: "{{ keepalived_conf_dir }}/keepalived.sysconfig"
+
+# HAProxy setting
+haproxy_bind_address: "*:6433"
+haproxy_user: "haproxy"
+haproxy_major_version: 3.0
+haproxy_minor_version: 11
+haproxy_download_url: "https://www.haproxy.org/download/3.0/src/haproxy-3.0.11.tar.gz"
+haproxy_src_dir: /tmp
+haproxy_make_option: USE_NS=1 USE_TFO=1 USE_OPENSSL=1 USE_ZLIB=1 USE_PCRE=1 USE_SYSTEMD=1 USE_LIBCRYPT=1 USE_THREAD=1 TARGET=linux-glibc
+haproxy_backends:
+  - { backend_name: "192.168.3.250", backend_ip: "192.168.3.250", backend_port: 80 }
+  - { backend_name: "192.168.3.251", backend_ip: "192.168.3.251", backend_port: 80 }
 USER: admin
 PASSWORD: password

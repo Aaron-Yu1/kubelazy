@@ -1,0 +1,41 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - make
+      - libnl-3-dev
+      - libssl-dev
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Ensure keepalived is unarchived
+  unarchive:
+    src: "bin/keepalived-{{ keepalived_version }}.tar.gz"
+    dest: "{{ keepalived_src_dir }}/"
+
+- name: Ensure keepalived makefile is configured
+  shell:
+    cd {{ keepalived_src_dir }}/keepalived-{{ keepalived_version }} && ./configure && make {{ haproxy_make_option }}  && make install
+
+- name: Ensure keepalived directory is present
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ keepalived_conf_dir }}"
+
+- name: Ensure keepalived service is copied.
+  template:
+    src: keepalived.service.j2
+    dest: /etc/systemd/system/keepalived.service
+
+- name: Ensure keepalived conf is set
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+
+- name: Ensure the service is started and enabled
+  service:
+    name: keepalived
+    state: started
+    enabled: yes

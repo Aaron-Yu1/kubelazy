@@ -1,0 +1,76 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - make
+      - build-essential
+      - zlib1g-dev 
+      - libpcre3-dev
+      - libssl-dev
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Enable ip_forward.
+  template:
+    src: ip_forward.conf.j2
+    dest: /etc/sysctl.d/ip_forward.conf
+- name: Apply sysctl file
+  shell: "sysctl -p /etc/sysctl.d/ip_forward.conf"
+
+- name: Ensure haproxy user is exited
+  user:
+    name: haproxy
+    create_home: no
+    shell: /usr/sbin/nologin
+    system: true
+
+- name: Ensure haproxy run path is exited
+  file:
+    path: /run/haproxy
+    state: directory
+
+- name: Ensure haproxy is unarchived
+  unarchive:
+    src: "bin/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}.tar.gz"
+    dest: "{{ haproxy_src_dir }}/"
+
+- name: Ensure haproxy makefile is configured
+  shell:
+    cd {{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}  && make {{ haproxy_make_option }}  && make install
+    creates=/usr/local/sbin/haproxy
+
+- name: Ensure haproxy directory is present
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "/etc/haproxy"
+    - "/var/lib/haproxy"
+
+- name: Ensure haproxy error files are copied
+  copy:
+    src: "{{ haproxy_src_dir }}/haproxy-{{ haproxy_major_version }}.{{ haproxy_minor_version }}/examples/errorfiles/"
+    dest: /etc/haproxy/errors/
+    remote_src: yes
+
+- name: Ensure haproxy service is copied.
+  template:
+    src: haproxy.service.j2
+    dest: /etc/systemd/system/haproxy.service
+
+- name: Ensure haproxy conf is set
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Copy check script
+  copy:
+    src: check-haproxy.sh
+    dest: /usr/bin/check-haproxy.sh
+    mode: '0755'
+
+- name: Ensure the service is started and enabled
+  service:
+    name: haproxy
+    state: started
+    enabled: yes

@@ -7,7 +7,12 @@ lb
 Requirements
 ------------
 
+下载 Haproxy 和 Keepalive 软件包
+```
+wget https://www.haproxy.org/download/3.0/src/haproxy-3.0.11.tar.gz
+wget https://www.keepalived.org/software/keepalived-2.3.2.tar.gz
+```
+注意：这里的软件包版本要和 roles/lb/vars/main.yml 文件中定义的版本一致。
 
 Role Variables
 --------------
-这个角色有两个变量 USER 和 PASSWORD，这两个变量对应的用户名和密码用于访问 haproxy 的状态页面。

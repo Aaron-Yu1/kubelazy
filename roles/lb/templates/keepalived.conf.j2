@@ -1,31 +1,47 @@
 ! Configuration File for keepalived
 
 global_defs {
-   router_id LVS_DEVEL
+{% if keepalived_activate_script %}
+    script_user {{ keepalived_script_user }} {{ keepalived_script_group }}
+{% endif %}
+    enable_script_security
 }
 
-vrrp_script checkhaproxy {
-    script "/usr/bin/check-haproxy.sh"
-    interval 2
-    weight -30
+{% if keepalived_enable_process_tracking %}
+vrrp_track_process {{ keepalived_track_process }} {
+    process {{ keepalived_track_process }}
+    quorum 1
+    delay 2
 }
+{% endif %}
 
 vrrp_instance VI_1 {
+    interface {{ keepalived_interface }}
     state {{ STATE }}
     priority {{ PRIORITY }}
-    interface {{ ansible_default_ipv4['alias'] }}
-    garp_master_delay 10
-    smtp_alert
-    virtual_router_id 88
-    advert_int 1
+
+    virtual_router_id {{ keepalived_virtual_router_id }}
+    unicast_src_ip {{ keepalived_unicast_src_ip }}
+
+    virtual_ipaddress {
+{% if keepalived_virtual_ipaddress_configs is defined %}
+{% for config in keepalived_virtual_ipaddress_configs %}
+        {{ config }}
+{% endfor %}
+{% else %}
+        {{ keepalived_virtual_ipaddress_config }}
+{% endif %}
+    }
+
     authentication {
         auth_type PASS
-        auth_pass 1111
+        auth_pass {{ keepalived_auth_pass }}
     }
-    virtual_ipaddress {
-        {{ VIP_ADDRESS }}/24 dev {{ ansible_default_ipv4['alias'] }}
+
+{% if keepalived_enable_process_tracking %}
+    track_process {
+        {{ keepalived_track_process }}
     }
-    track_script {
-        checkproxy
-    }
+{% endif %}
+
 }

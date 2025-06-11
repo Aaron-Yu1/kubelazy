@@ -35,7 +35,7 @@ defaults
 
 frontend kube-apiserver
     mode                tcp
-    bind                *:6443
+    bind                {{ haproxy_bind_address }}
     option              tcplog
     default_backend     kube-apiserver
 
@@ -52,6 +52,6 @@ listen stats
 backend kube-apiserver
     mode        tcp
     balance     roundrobin
-    server {{ groups['master'].0 }} {{ groups['master'].0 }}:6443 check inter 3s fall 3 rise 5
-    server {{ groups['master'].1 }} {{ groups['master'].1 }}:6443 check inter 3s fall 3 rise 5
-    server {{ groups['master'].2 }} {{ groups['master'].2 }}:6443 check inter 3s fall 3 rise 5
+    {% for backend in haproxy_backends %}
+    server {{ backend.backend_name }} {{ backend.backend_ip }}:{{ backend.backend_port }} check inter 3s fall 3 rise 5
+    {% endfor %}
