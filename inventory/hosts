@@ -2,19 +2,20 @@
 #
 # You should change it and replace IP address
 [master]
-192.168.3.101
-192.168.3.102
-192.168.3.103
+192.168.3.11
+192.168.3.12
+192.168.3.13
 
 # 关于ETCD_NODE_NAME 建议使用节点主机的 hostname。
 [etcd]
-192.168.3.101 ETCD_NODE_NAME=k8s-master01
-192.168.3.102 ETCD_NODE_NAME=k8s-master02
-192.168.3.103 ETCD_NODE_NAME=k8s-master03
+192.168.3.11
+192.168.3.12
+192.168.3.13
 
 [work]
-192.168.3.104 K8S_NODE_NAME=k8s-node01
-192.168.3.105 K8S_NODE_NAME=k8s-node02
+192.168.3.21 K8S_NODE_NAME="{{ ansible_facts['hostname'] }}"
+192.168.3.22 K8S_NODE_NAME="{{ ansible_facts['hostname'] }}"
+192.168.3.23 K8S_NODE_NAME="{{ ansible_facts['hostname'] }}"
 
 [ha]
 192.168.3.252 STATE=MASTER PRIORITY=100

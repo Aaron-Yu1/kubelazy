@@ -33,6 +33,7 @@
   template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
+  notify: restart_keepalived_service
 
 - name: Ensure the service is started and enabled
   service:

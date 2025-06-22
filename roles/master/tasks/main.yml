@@ -8,7 +8,7 @@
 
 - name: get certs directory info
   stat:
-    path: certs/
+    path: /etc/kubernetes/ssl
   register: ssl
 
 - name: Creste a dir for certs
@@ -43,8 +43,8 @@
   with_items:
     - ca.pem
     - ca-key.pem
-    - apiserver.pem
-    - apiserver-key.pem
+    - kube-apiserver.pem
+    - kube-apiserver-key.pem
     - aggregator-proxy.pem
     - aggregator-proxy-key.pem
 
@@ -67,6 +67,35 @@
     - kube-apiserver.service
     - kube-controller-manager.service
     - kube-scheduler.service
+
+- name: Check the kube-apiserver service
+  shell: "systemctl is-active kube-apiserver.service"
+  register: api_status
+  until: '"active" in api_status.stdout'
+  retries: 10
+  delay: 3
+
+- name: Check the kube-controller-manager service
+  shell: "systemctl is-active kube-controller-manager.service"
+  register: cm_status
+  until: '"active" in cm_status.stdout'
+  retries: 8
+  delay: 3
+
+- name: Check the kube-scheduler service
+  shell: "systemctl is-active kube-scheduler.service"
+  register: sch_status
+  until: '"active" in sch_status.stdout'
+  retries: 8
+  delay: 3
+
+- name: Change the apiserver ip address in kubeconfig when the LB is enabled.
+  lineinfile:
+    dest: "certs/kubectl.kubeconfig"
+    regexp: "^    server"
+    line: "    server: https://{{ VIP_ADDRESS }}:{{ SECURE_PORT }}"
+  when: "groups['ha']|length > 0"
+  connection: local
 
 - name: Copy kubeconfig file
   copy:

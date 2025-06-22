@@ -12,7 +12,7 @@ ExecStart=/usr/local/bin/kubelet \
   --container-runtime-endpoint=unix:///var/run/cri-dockerd.sock \
   {% endif %}
   --hostname-override={{ K8S_NODE_NAME }} \
-  --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.8 \
+  --pod-infra-container-image="{{ PAUSE_IMAGE }}" \
   --kubeconfig=/etc/kubernetes/kubelet.kubeconfig \
   --root-dir=/var/lib/kubelet \
   --v=2

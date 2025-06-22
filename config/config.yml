@@ -7,12 +7,38 @@
 INSTALL_MODE: "binary"
 
 # RUNTIME 定义 kubernetes 群集使用的 Runtime，其值可以是 containerd，docker
-RUNTIME: "docker"
+RUNTIME: "containerd"
+
+############################
+# role:deploy
+############################
+# default: ca will expire in 100 years
+# default: certs issued by the ca will expire in 50 years
+CA_EXPIRY: "876000h"
+CERT_EXPIRY: "438000h"
+
+# force to recreate CA and other certs, not suggested to set 'true'
+CHANGE_CA: false
+
+# kubeconfig 配置参数
+CLUSTER_NAME: "prod"
+CONTEXT_NAME: "context-{{ CLUSTER_NAME }}"
+
 
 # API server 的地址以及使用的端口
 API_SERVER_IP: "{{ groups['master'][0] }}"
 KUBE_APISERVER: "{{ hostvars[API_SERVER_IP]['ansible_default_ipv4']['address'] }}"
 SECURE_PORT: 6443
+
+# VIP 地址（只有配置 HAProxy 时才会生效）
+VIP_ADDRESS: 192.168.3.100
+
+# 如果有自己的loadbalancer，或者自定义的域名，可以添加到这里
+CLUSTER_HOSTS:
+  - 192.168.3.220
+
+PAUSE_IMAGE: "registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.8"
+
 
 # kubernetes service 的网络范围，以及NodePort 模式下可以使用的端口范围
 SERVICE_CIDR: 192.168.0.0/16
@@ -22,18 +48,10 @@ NODE_PORT_RANGE: 30000-32767
 CLUSTER_CIDR: 172.16.0.0/16
 NODE_CIDR_LEN: 24
 
-# 群集的名称
-CLUSTER_NAME: k8s
 
 # kube-proxy 使用的模式，ipvs 或 iptables
 PROXY_MODE: ipvs
 
-# VIP 地址
-VIP_ADDRESS: 192.168.3.100
-
-# 如果有自己的loadbalancer，或者自定义的域名，可以添加到这里
-CLUSTER_HOSTS:
-  - 192.168.3.220
 
 # 定义 etcd 的版本
 ETCD_VERSION: v3.5.9

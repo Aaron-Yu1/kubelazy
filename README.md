@@ -2,7 +2,7 @@
   
 
 支持的操作系统：  
-- Ubuntu 20.04
+- Ubuntu 22.04
 
 Kubernetes 版本：  
 - 1.26
@@ -27,9 +27,9 @@ mkdir bin
 
 cd bin
 
-# 下载 cfssl
-wget https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssljson_1.6.3_linux_amd64 -O cfssljson
-wget https://github.com/cloudflare/cfssl/releases/download/v1.6.3/cfssl_1.6.3_linux_amd64 -O cfssl
+# 下载 cfssl。国内下载速度太慢，可以通过加速器下载，只需要确保最后文件名一致即可
+wget https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssljson_1.6.5_linux_amd64 -O cfssljson
+wget https://github.com/cloudflare/cfssl/releases/download/v1.6.5/cfssl_1.6.5_linux_amd64 -O cfssl
 chmod +x cfss*
 
 # 下载 etcd

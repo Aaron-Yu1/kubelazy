@@ -5,13 +5,14 @@
     path: certs/
   register: d
 
-- name: Creste a dir for certs
+- name: Creste a dir for certs directory if it doesn't exist
   file:
     path: certs
     state: directory
   when: "d.stat.isreg is not defined"
 
-- name: get ca infor
+# Create cert for CA
+- name: get ca info
   stat:
     path: certs/ca.pem
   register: p
@@ -30,6 +31,7 @@
                        -initca ca-csr.json | ../bin/cfssljson -bare ca" 
   when: "p.stat.isreg is not defined"
 
+# Create cert for etcd
 - name: Get etcd cert info
   stat:
     path: certs/etcd.pem
@@ -38,6 +40,7 @@
 - import_tasks: etcd.yml
   when: "e.stat.isreg is not defined"
 
+# Create cert for kube-apiserver
 - name: Get kubernetes cert info
   stat:
     path: certs/apiserver.pem
@@ -46,14 +49,16 @@
 - import_tasks: kube-apiserver.yml
   when: "api.stat.isreg is not defined"
 
-- name: Get kubectl_kubeconfig info
+# Create configure file: kubectl.kubeconfig
+- name: Get kubectl-kubeconfig info
   stat:
     path: certs/kubectl.kubeconfig
   register: kubectl
 
-- import_tasks: kubectl_kubeconfig.yml
+- import_tasks: kubectl-kubeconfig.yml
   when: "kubectl.stat.isreg is not defined"
 
+# Create configure file: kube-controller-manager.kubeconfig
 - name: Get kube-controller-manager.kubeconfig info
   stat:
     path: certs/kube-controller-manager.kubeconfig
@@ -62,6 +67,7 @@
 - import_tasks: kube-controller-manager.kubeconfig.yml
   when: "kcm.stat.isreg is not defined"
 
+# Create configure file: kube-scheduler.kubeconfig
 - name: Get kube-scheduler.kubeconfig info
   stat:
     path: certs/kube-scheduler.kubeconfig
@@ -70,6 +76,7 @@
 - import_tasks: kube-scheduler.kubeconfig.yml
   when: "ks.stat.isreg is not defined"
 
+# Create configure file: kube-proxy.kubeconfig
 - name: Get kube-scheduler.kubeconfig info
   stat:
     path: certs/kube-proxy.kubeconfig

@@ -1,3 +1,5 @@
 ---
 # vars file for roles/containerd
-CONTAINERD_VERSION: "1.7.6"
+CONTAINERD_VERSION: "1.7.27"
+CNI_VERSION: "1.6.2"
+CRICTL_VERSION: "1.32.0"

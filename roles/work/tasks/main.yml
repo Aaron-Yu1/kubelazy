@@ -64,3 +64,18 @@
   with_items:
     - kubelet.service
     - kube-proxy.service
+
+# Check the service
+- name: Check the kube-proxy service
+  shell: "systemctl is-active kube-proxy.service"
+  register: kubeproxy_status
+  until: '"active" in kubeproxy_status.stdout'
+  retries: 4
+  delay: 2
+
+- name: Check the kueblet service
+  shell: "systemctl is-active kubelet.service"
+  register: kubelet_status
+  until: '"active" in kubelet_status.stdout'
+  retries: 4
+  delay: 2

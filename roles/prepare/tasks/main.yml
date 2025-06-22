@@ -6,6 +6,12 @@
     dest: /etc/hosts
     backup: yes
 
+- name: Change source list
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+    backup: yes
+
 - name: check apt lock
   file:
     path: "{{ item }}"

@@ -2,3 +2,5 @@
 # vars file for etcd
 TMP_NODES: "{% for h in groups['etcd'] %}etcd-{{ hostvars[h]['ansible_facts']['hostname'] }}=https://{{ hostvars[h]['ansible_facts']['default_ipv4']['address'] }}:2380,{% endfor %}"
 ETCD_NODES: "{{ TMP_NODES.rstrip(',') }}"
+ETCD_NODE_NAME: "etcd-{{ ansible_facts['hostname'] }}"
+ETCD_VERSION: "3.5.16"

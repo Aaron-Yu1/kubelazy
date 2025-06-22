@@ -1,0 +1,5 @@
+---
+- name: unarchive kubernetes
+  unarchive:
+    src: bin/kubernetes-server-linux-amd64.tar.gz
+    dest: "{{ansible_env.PWD}}/bin/"

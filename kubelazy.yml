@@ -1,15 +1,24 @@
 ---
+- name: Local Tasks
+  hosts: localhost
+  vars_files:
+    - config/config.yml
+  roles:
+    - name: Unarchive Packages
+      role: unarchive-pkgs
+      run_once: true
+      tags: unarchive packages
+    - name: Create certs
+      role: certs
+      run_once: true
+      when: INSTALL_MODE == 'binary'
+      tags: create certs
+
 - name: Deploy kubernetes
   hosts: all
   vars_files:
     - config/config.yml
   roles:
-    - name: Create certs
-      role: certs
-      delegate_to: localhost
-      run_once: true
-      when: INSTALL_MODE == 'binary'
-
     - name: Initialize the OS
       role: prepare
       tags: prepare os
@@ -20,14 +29,34 @@
         - "groups['ha']|length > 0"
         - "inventory_hostname in groups['ha']"
       tags: deploy lb
-  tasks:
-    - include_tasks: kubeadm.yml
-      when: INSTALL_MODE == 'kubeadm'
 
-    - include_tasks: binary.yml
-      when: INSTALL_MODE == 'binary'
+    - name: Deploy Containerd
+      role: containerd
+      when:
+        - "inventory_hostname in groups['work']"
+      tags: deploy containerd
 
-    - include_tasks: plugins.yml
-      
+    - name: Deploy etcd
+      role: etcd
+      when: "inventory_hostname in groups['etcd']"
+      tags: deploy etcd
 
+    - name: Deploy master node
+      role: master
+      when: "inventory_hostname in groups['master']"
+      tags: deploy master
 
+    - name: Deploy work node
+      role: work
+      when: "inventory_hostname in groups['work']"
+      tags: deploy work
+
+    - name: Deploy cluster network
+      role: calico
+      when: "CLUSTER_NETWORK == 'calico'"
+      tags: deploy calico
+
+    - name: Deploy cluster dns
+      role: coredns
+      when: "CLUSTER_DNS == 'coredns'"
+      tags: deploy dns

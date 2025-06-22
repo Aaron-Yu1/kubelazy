@@ -2,7 +2,7 @@
 # tasks file for etcd
 - name: unarchive docker package
   unarchive:
-    src: bin/etcd-{{ ETCD_VERSION }}-linux-amd64.tar.gz
+    src: bin/etcd-v{{ ETCD_VERSION }}-linux-amd64.tar.gz
     dest: /tmp
 - name: Create a directoy for etcd
   file:
@@ -22,7 +22,7 @@
 
 - name: Copy the bin file
   copy:
-    src: /tmp/etcd-{{ ETCD_VERSION }}-linux-amd64/{{ item }}
+    src: /tmp/etcd-v{{ ETCD_VERSION }}-linux-amd64/{{ item }}
     dest: /usr/local/bin
     remote_src: yes
     mode: 755
@@ -32,7 +32,7 @@
 - name: copy service file
   template:
     src: etcd.service.j2 
-    dest: /usr/lib/systemd/system/etcd.service
+    dest: /etc/systemd/system/etcd.service
 - name: Copy cert file
   copy:
     src: certs/{{ item }}
@@ -47,3 +47,9 @@
     state: started
     enabled: true
     daemon_reload: true
+- name: check the etcd service
+  shell: "systemctl is-active etcd.service"
+  register: etcd_status
+  until: '"active" in etcd_status.stdout'
+  retries: 8
+  delay: 8
